@@ -2,13 +2,13 @@ import 'package:birthday_planer/models/friend.dart';
 
 class Gift {
   final String name;
-  final bool isBought;
+  final bool isPrepared;
   final String? url;
   final Friend? forFriend;
 
   Gift({
     required this.name,
-    required this.isBought,
+    required this.isPrepared,
     this.url,
     this.forFriend,
   });
