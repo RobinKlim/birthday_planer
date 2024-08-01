@@ -8,17 +8,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Color.fromARGB(255, 56, 165, 184),
+        brightness: Brightness.light,
+      ).copyWith(
+        primary: Color.fromARGB(255, 56, 165, 184),
+        onPrimary: Colors.white,
+        error: Colors.red,
+        onError: Colors.white,
+      ),
+    );
+
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.pinkAccent,
-          brightness: Brightness.light,
-        ).copyWith(
-          primary: Colors.pinkAccent,
-          onPrimary: Colors.white,
-          error: Colors.red,
-          onError: Colors.white,
+      theme: theme.copyWith(
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
         ),
       ),
       home: const NavigationWidget(),
