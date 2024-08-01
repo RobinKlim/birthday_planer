@@ -34,7 +34,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
         ],
       ),
       body: <Widget>[
-        FriendsList(),
+        FriendsListPage(),
         CalendarPage(),
       ][currentPageIndex],
     );

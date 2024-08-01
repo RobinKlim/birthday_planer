@@ -1,13 +1,14 @@
+import 'package:birthday_planer/pages/add_friend_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/list_item.dart';
 import 'package:birthday_planer/models/friend.dart';
 
-class FriendsList extends StatefulWidget {
+class FriendsListPage extends StatefulWidget {
   @override
-  State<FriendsList> createState() => _FriendsListState();
+  State<FriendsListPage> createState() => _FriendsListPageState();
 }
 
-class _FriendsListState extends State<FriendsList> {
+class _FriendsListPageState extends State<FriendsListPage> {
   @override
   Widget build(BuildContext context) {
     final List<Friend> friends = [
@@ -31,7 +32,12 @@ class _FriendsListState extends State<FriendsList> {
                   shape: BoxShape.circle,
                 ),
                 child: FloatingActionButton(
-                  onPressed: () => print("hi"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddFriendPage()),
+                    );
+                  },
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   child: Icon(Icons.add,
                       color: Theme.of(context).colorScheme.primary),
