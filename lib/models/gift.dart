@@ -1,15 +1,13 @@
 import 'package:birthday_planer/models/friend.dart';
 
 class Gift {
-  final String name;
-  final bool isPrepared;
-  final String? url;
-  final Friend? forFriend;
+  String name;
+  String? url;
+  List<Friend>? assignedFriends;
 
   Gift({
     required this.name,
-    required this.isPrepared,
     this.url,
-    this.forFriend,
+    this.assignedFriends,
   });
 }

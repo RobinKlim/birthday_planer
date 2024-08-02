@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/pages/calendar_page.dart';
 import 'package:birthday_planer/pages/friends_list_page.dart';
+import 'package:birthday_planer/pages/gift_list_page.dart';
 
 class NavigationWidget extends StatefulWidget {
   const NavigationWidget({super.key});
@@ -31,11 +32,16 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             icon: Icon(Icons.calendar_today),
             label: 'Calendar',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.card_giftcard),
+            label: 'Gifts',
+          ),
         ],
       ),
       body: <Widget>[
         FriendsListPage(),
         CalendarPage(),
+        GiftListPage(),
       ][currentPageIndex],
     );
   }
