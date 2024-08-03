@@ -1,4 +1,5 @@
 import 'package:birthday_planer/pages/add_friend_page.dart';
+import 'package:birthday_planer/pages/gift_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/friend_list_item.dart';
 import 'package:birthday_planer/models/friend.dart';
@@ -22,9 +23,10 @@ class _GiftListPageState extends State<GiftListPage> {
             padding: const EdgeInsets.all(8.0),
             child: FloatingActionButton(
               onPressed: () {
-                setState(() {
-                  notes.add('New Note');
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GiftPage()),
+                );
               },
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               child:
@@ -57,7 +59,7 @@ class _GiftListPageState extends State<GiftListPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  print('Friend added');
+                  print('Gift added');
                 },
                 child: SizedBox(
                   width: double.infinity,
