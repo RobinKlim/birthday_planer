@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/navigation_widget.dart'; // Import the new navigation widget
+import 'package:birthday_planer/widgets/navigation_widget.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
