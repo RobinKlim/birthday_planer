@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:provider/provider.dart';
 
 class AddFriendPage extends StatefulWidget {
   @override
@@ -9,6 +14,7 @@ class AddFriendPage extends StatefulWidget {
 class _AddFriendPageState extends State<AddFriendPage> {
   DateTime? selectedDate;
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -25,10 +31,29 @@ class _AddFriendPageState extends State<AddFriendPage> {
     }
   }
 
+  void _addFriend() async {
+    final String name = _nameController.text;
+
+    if (selectedDate != null && name.isNotEmpty) {
+      final DateTime birthday = selectedDate!;
+      final friend = Friend(name: name, birthday: birthday!);
+      context.read<Database>().addFriend(friend);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Friend added successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Birthday and Name is required.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final Friend friend;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Add friend'),
@@ -46,6 +71,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                 child: Column(
                   children: [
                     TextField(
+                      controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Name',
                       ),
@@ -76,7 +102,9 @@ class _AddFriendPageState extends State<AddFriendPage> {
             SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                print('Friend added');
+                print(_nameController.text);
+                print(_dateController.text);
+                _addFriend();
               },
               child: SizedBox(
                 width: double.infinity,

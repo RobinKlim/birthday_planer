@@ -9,12 +9,12 @@ part 'friend.g.dart';
 class Friend {
   Id id = Isar.autoIncrement;
   String name;
-  // DateTime birthday;
+  DateTime birthday;
   // Gift? gift;
 
   Friend({
     required this.name,
-    // required this.birthday,
+    required this.birthday,
     //  this.gift,
   });
 }

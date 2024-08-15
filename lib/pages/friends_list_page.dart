@@ -2,6 +2,8 @@ import 'package:birthday_planer/pages/add_friend_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/friend_list_item.dart';
 import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:provider/provider.dart';
 
 class FriendsListPage extends StatefulWidget {
   @override
@@ -10,13 +12,19 @@ class FriendsListPage extends StatefulWidget {
 
 class _FriendsListPageState extends State<FriendsListPage> {
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.watch<Database>().getAllFriends();
+  }
+
+  void readFriends() {
+    context.watch<Database>().getAllFriends();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final List<Friend> friends = [
-      Friend(name: 'Robin', birthday: DateTime(1992, 7, 11)),
-      Friend(name: 'Alex', birthday: DateTime(1985, 5, 21)),
-      Friend(name: 'Ben', birthday: DateTime(1924, 12, 23)),
-      Friend(name: 'Sarah', birthday: DateTime(1915, 5, 1)),
-    ];
+    final database = context.watch<Database>();
+    List<Friend> friends = database.currentFriends;
 
     return Scaffold(
       appBar: AppBar(

@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/navigation_widget.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  runApp(const MyApp());
+  // Datenbank initialisieren
+  WidgetsFlutterBinding.ensureInitialized();
+  final db = Database();
+  await db.initialize();
+
+  runApp(ChangeNotifierProvider(
+    create: (context) => Database(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
