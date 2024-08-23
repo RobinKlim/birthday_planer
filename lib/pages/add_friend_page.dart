@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
-import 'package:birthday_planer/models/database.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 

@@ -1,3 +1,4 @@
+import 'package:birthday_planer/pages/friend_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,12 @@ class ListItem extends StatelessWidget {
         title: Text(friend.name),
         subtitle: Text(DateFormat.yMMMMd().format(friend.birthday)),
         trailing: Icon(Icons.navigate_next),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FriendDetailPage()),
+          );
+        },
       ),
     );
   }
