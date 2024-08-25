@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:intl/intl.dart';
 
-class ListItem extends StatelessWidget {
+class FriendListItem extends StatelessWidget {
   final Friend friend;
 
-  ListItem({required this.friend});
+  FriendListItem({required this.friend});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,8 @@ class ListItem extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => FriendDetailPage()),
+            MaterialPageRoute(
+                builder: (context) => FriendDetailPage(friend: friend)),
           );
         },
       ),

@@ -62,7 +62,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 child: ListView.builder(
                   itemCount: friends.length,
                   itemBuilder: (context, index) {
-                    return ListItem(friend: friends[index]);
+                    return FriendListItem(friend: friends[index]);
                   },
                 ),
               ),

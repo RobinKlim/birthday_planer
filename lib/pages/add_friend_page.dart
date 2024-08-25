@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:birthday_planer/models/database.dart';
+import 'package:birthday_planer/widgets/friend_card.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class AddFriendPage extends StatefulWidget {
   @override
@@ -9,32 +11,19 @@ class AddFriendPage extends StatefulWidget {
 }
 
 class _AddFriendPageState extends State<AddFriendPage> {
-  DateTime? selectedDate;
   TextEditingController _dateController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-        _dateController.text = "${selectedDate!.toLocal()}".split(' ')[0];
-      });
-    }
-  }
-
   void _addFriend() async {
     final String name = _nameController.text;
+    final String birthdayStr = _dateController.text;
 
-    if (selectedDate != null && name.isNotEmpty) {
-      final DateTime birthday = selectedDate!;
-      final friend = Friend(name: name, birthday: birthday!);
+    if (name.isNotEmpty && birthdayStr.isNotEmpty) {
+      DateTime birthday = DateFormat('yyyy-MM-dd').parse(birthdayStr);
+
+      final friend = Friend(name: name, birthday: birthday);
       context.read<Database>().addFriend(friend);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Friend added successfully!'),
@@ -44,7 +33,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Birthday and Name is required.')),
+        SnackBar(content: Text('Birthday and Name are required.')),
       );
     }
   }
@@ -53,7 +42,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add friend'),
+        title: Text('Add Friend'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -61,46 +50,13 @@ class _AddFriendPageState extends State<AddFriendPage> {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Card(
-              color: Theme.of(context).colorScheme.onPrimary,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: AbsorbPointer(
-                        child: TextField(
-                          controller: _dateController,
-                          decoration: InputDecoration(
-                            labelText: 'Birthday',
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Gift (optional)',
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                  ],
-                ),
-              ),
+            FriendCard(
+              nameController: _nameController,
+              dateController: _dateController,
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                print(_nameController.text);
-                print(_dateController.text);
                 _addFriend();
               },
               child: SizedBox(
