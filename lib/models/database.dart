@@ -31,7 +31,7 @@ class Database extends ChangeNotifier {
     // save to db
     await isar.writeTxn(() => isar.friends.put(newFriend));
     // re-read from db
-    getAllFriends();
+    await getAllFriends();
   }
 
   // R E A D
@@ -47,6 +47,18 @@ class Database extends ChangeNotifier {
   }
 
   // U P D A T E
+  // TODO: return updatedFriend
+  Future<Friend?> updateFriend(Friend friend) async {
+    final friendDB = await isar.friends.get(friend.id);
+
+    if (friendDB != null) {
+      await isar.writeTxn(() => isar.friends.put(friend));
+      final updatedFriend = await isar.friends.get(friend.id);
+      await getAllFriends();
+      return updatedFriend;
+    }
+    return null;
+  }
 
   // D E L E T E
 }
