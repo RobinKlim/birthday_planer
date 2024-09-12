@@ -14,7 +14,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<Database>().getAllFriends();
+    readFriends();
   }
 
   void readFriends() {
@@ -47,8 +47,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                     );
                   },
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  child: Icon(Icons.add,
-                      color: Theme.of(context).colorScheme.primary),
+                  child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
                 )),
           ),
         ],

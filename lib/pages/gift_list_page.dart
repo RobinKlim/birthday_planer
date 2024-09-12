@@ -1,8 +1,8 @@
-import 'package:birthday_planer/pages/add_friend_page.dart';
 import 'package:birthday_planer/pages/gift_page.dart';
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/friend_list_item.dart';
-import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:provider/provider.dart';
+import 'package:birthday_planer/models/gift.dart';
 
 class GiftListPage extends StatefulWidget {
   @override
@@ -10,9 +10,22 @@ class GiftListPage extends StatefulWidget {
 }
 
 class _GiftListPageState extends State<GiftListPage> {
-  List<String> notes = ["First Note", "Second Note", "Third Note"];
+  // List<String> notes = ["First Note", "Second Note", "Third Note"];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    readGifts();
+  }
 
+  void readGifts() {
+    context.watch<Database>().getAllGifts();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final database = context.watch<Database>();
+    List<Gift> gifts = database.currentGifts;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Giftideas'),
@@ -29,8 +42,7 @@ class _GiftListPageState extends State<GiftListPage> {
                 );
               },
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              child:
-                  Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+              child: Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
             ),
           ),
         ],
@@ -42,14 +54,14 @@ class _GiftListPageState extends State<GiftListPage> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  itemCount: notes.length,
+                  itemCount: gifts.length,
                   itemBuilder: (context, index) {
                     return Card(
                       color: Theme.of(context).colorScheme.onPrimary,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          notes[index],
+                          gifts[index].name,
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ),
