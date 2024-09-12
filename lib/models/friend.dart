@@ -2,7 +2,7 @@ import 'package:birthday_planer/models/gift.dart';
 import 'package:isar/isar.dart';
 
 // this file is needed to generate file
-// then run: dart run_build_runner build
+// then run: flutter pub run build_runner build
 part 'friend.g.dart';
 
 @collection
