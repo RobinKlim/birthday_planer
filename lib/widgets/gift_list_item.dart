@@ -28,7 +28,10 @@ class GiftListItem extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => GiftDetailPage()),
+            MaterialPageRoute(
+                builder: (context) => GiftDetailPage(
+                      gift: gift,
+                    )),
           );
         },
       ),

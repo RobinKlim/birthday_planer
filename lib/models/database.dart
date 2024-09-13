@@ -92,14 +92,13 @@ class Database extends ChangeNotifier {
   }
 
   // U P D A T E
-  // TODO: return updatedFriend
   Future<Gift?> updateGift(Gift gift) async {
     final giftDB = await isar.gifts.get(gift.id);
 
     if (giftDB != null) {
       await isar.writeTxn(() => isar.gifts.put(gift));
       final updatedGift = await isar.gifts.get(gift.id);
-      await getAllFriends();
+      await getAllGifts();
       return updatedGift;
     }
     return null;

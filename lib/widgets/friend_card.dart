@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FriendCard extends StatefulWidget {
-  final TextEditingController nameController;
-  final TextEditingController dateController;
+  final TextEditingController _friendNameController;
+  final TextEditingController _frienddateController;
 
   FriendCard({
-    required this.nameController,
-    required this.dateController,
-  });
+    required TextEditingController friendNameController,
+    required TextEditingController friendDateController,
+  })  : _frienddateController = friendDateController,
+        _friendNameController = friendNameController;
 
   @override
   _FriendCardState createState() => _FriendCardState();
@@ -22,7 +23,7 @@ class _FriendCardState extends State<FriendCard> {
       lastDate: DateTime(2101),
     );
     if (pickedDate != null) {
-      widget.dateController.text = "${pickedDate.toLocal()}".split(' ')[0];
+      widget._frienddateController.text = "${pickedDate.toLocal()}".split(' ')[0];
     }
   }
 
@@ -35,7 +36,7 @@ class _FriendCardState extends State<FriendCard> {
         child: Column(
           children: [
             TextField(
-              controller: widget.nameController,
+              controller: widget._friendNameController,
               decoration: InputDecoration(
                 labelText: 'Name',
               ),
@@ -45,7 +46,7 @@ class _FriendCardState extends State<FriendCard> {
               onTap: () => _selectDate(context),
               child: AbsorbPointer(
                 child: TextField(
-                  controller: widget.dateController,
+                  controller: widget._frienddateController,
                   decoration: InputDecoration(
                     labelText: 'Birthday',
                   ),

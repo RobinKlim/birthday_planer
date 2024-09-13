@@ -51,8 +51,8 @@ class _AddFriendPageState extends State<AddFriendPage> {
         child: Column(
           children: [
             FriendCard(
-              nameController: _friendNameController,
-              dateController: _friendBirthdayDateController,
+              friendNameController: _friendNameController,
+              friendDateController: _friendBirthdayDateController,
             ),
             SizedBox(height: 16),
             ElevatedButton(

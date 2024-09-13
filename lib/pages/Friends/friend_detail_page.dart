@@ -54,7 +54,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${widget.friend.name} not updated!'),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.grey,
         ),
       );
     }
@@ -65,14 +65,16 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.friend.name),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
             FriendCard(
-              nameController: _nameController,
-              dateController: _dateController,
+              friendNameController: _nameController,
+              friendDateController: _dateController,
             ),
             SizedBox(height: 16),
             ElevatedButton(

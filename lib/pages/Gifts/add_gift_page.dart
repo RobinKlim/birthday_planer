@@ -17,27 +17,6 @@ class _AddGiftPageState extends State<AddGiftPage> {
     'Charlie',
     'David',
     'Emma',
-    'Frank',
-    'Grace',
-    'Hannah',
-    'Isaac',
-    'Jack',
-    'Katie',
-    'Liam',
-    'Mia',
-    'Nathan',
-    'Olivia',
-    'Paul',
-    'Quinn',
-    'Rachel',
-    'Sam',
-    'Tina',
-    'Uma',
-    'Victor',
-    'Wendy',
-    'Xander',
-    'Yasmin',
-    'Zachary'
   ];
 
   TextEditingController _giftNameController = TextEditingController();
