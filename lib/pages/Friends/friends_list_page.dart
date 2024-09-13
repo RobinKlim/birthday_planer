@@ -1,4 +1,4 @@
-import 'package:birthday_planer/pages/add_friend_page.dart';
+import 'package:birthday_planer/pages/Friends/add_friend_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/friend_list_item.dart';
 import 'package:birthday_planer/models/friend.dart';

@@ -1,4 +1,4 @@
-import 'package:birthday_planer/pages/friend_detail_page.dart';
+import 'package:birthday_planer/pages/Friends/friend_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:intl/intl.dart';
@@ -22,8 +22,7 @@ class FriendListItem extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => FriendDetailPage(friend: friend)),
+            MaterialPageRoute(builder: (context) => FriendDetailPage(friend: friend)),
           );
         },
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/pages/calendar_page.dart';
-import 'package:birthday_planer/pages/friends_list_page.dart';
-import 'package:birthday_planer/pages/gift_list_page.dart';
+import 'package:birthday_planer/pages/Friends/friends_list_page.dart';
+import 'package:birthday_planer/pages/Gifts/gift_list_page.dart';
 
 class NavigationWidget extends StatefulWidget {
   const NavigationWidget({super.key});

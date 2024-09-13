@@ -1,8 +1,9 @@
-import 'package:birthday_planer/pages/gift_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/gift.dart';
+import 'add_gift_page.dart';
+import 'package:birthday_planer/widgets/gift_list_item.dart';
 
 class GiftListPage extends StatefulWidget {
   @override
@@ -10,7 +11,6 @@ class GiftListPage extends StatefulWidget {
 }
 
 class _GiftListPageState extends State<GiftListPage> {
-  // List<String> notes = ["First Note", "Second Note", "Third Note"];
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -38,7 +38,7 @@ class _GiftListPageState extends State<GiftListPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GiftPage()),
+                  MaterialPageRoute(builder: (context) => AddGiftPage()),
                 );
               },
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -56,16 +56,7 @@ class _GiftListPageState extends State<GiftListPage> {
                 child: ListView.builder(
                   itemCount: gifts.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          gifts[index].name,
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                    );
+                    return GiftListItem(gift: gifts[index]);
                   },
                 ),
               ),

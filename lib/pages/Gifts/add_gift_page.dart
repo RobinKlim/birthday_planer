@@ -1,14 +1,16 @@
-import 'package:birthday_planer/pages/select_friends_page.dart';
+import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:birthday_planer/models/gift.dart';
 
-class GiftPage extends StatefulWidget {
+class AddGiftPage extends StatefulWidget {
   @override
-  State<GiftPage> createState() => _GiftPageState();
+  State<AddGiftPage> createState() => _AddGiftPageState();
 }
 
-class _GiftPageState extends State<GiftPage> {
+class _AddGiftPageState extends State<AddGiftPage> {
   List<String> selectedFriends = [];
-
   List<String> friendsList = [
     'Alice',
     'Bob',
@@ -38,11 +40,16 @@ class _GiftPageState extends State<GiftPage> {
     'Zachary'
   ];
 
+  TextEditingController _giftNameController = TextEditingController();
+  TextEditingController _giftDescriptionController = TextEditingController();
+  TextEditingController _giftLinkController = TextEditingController();
+  TextEditingController _giftPriceController = TextEditingController();
+
   void _openSelectFriendsPage() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectFriendsPage(availableFriends: friendsList),
+        builder: (context) => GiftSelectFriendsPage(availableFriends: friendsList),
       ),
     );
 
@@ -50,6 +57,33 @@ class _GiftPageState extends State<GiftPage> {
       setState(() {
         selectedFriends = result;
       });
+    }
+  }
+
+  void _addGift() async {
+    final String giftName = _giftNameController.text;
+    final String? giftDescription = _giftDescriptionController.text.isNotEmpty ? _giftDescriptionController.text : null;
+    final String? giftLink = _giftLinkController.text.isNotEmpty ? _giftLinkController.text : null;
+    final String? giftPrice = _giftPriceController.text.isNotEmpty ? _giftPriceController.text : null;
+    final int? giftPriceParsed = (giftPrice != null) ? int.tryParse(giftPrice) : null;
+
+    print(giftPriceParsed.runtimeType);
+
+    if (giftName.isNotEmpty) {
+      final newGift = Gift(name: giftName, description: giftDescription, url: giftLink, priceInEuro: giftPriceParsed);
+      context.read<Database>().addGift(newGift);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gift added successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Name of Gift is required.')),
+      );
     }
   }
 
@@ -73,6 +107,7 @@ class _GiftPageState extends State<GiftPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
+                      controller: _giftNameController,
                       decoration: InputDecoration(
                         labelText: 'Name',
                         labelStyle: TextStyle(
@@ -83,6 +118,7 @@ class _GiftPageState extends State<GiftPage> {
                     ),
                     Divider(),
                     TextField(
+                      controller: _giftDescriptionController,
                       decoration: InputDecoration(
                         labelText: 'Description',
                         labelStyle: TextStyle(
@@ -92,8 +128,19 @@ class _GiftPageState extends State<GiftPage> {
                       ),
                     ),
                     TextField(
+                      controller: _giftLinkController,
                       decoration: InputDecoration(
                         labelText: 'Link',
+                        labelStyle: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    TextField(
+                      controller: _giftPriceController,
+                      decoration: InputDecoration(
+                        labelText: 'Price (€)',
                         labelStyle: TextStyle(
                           fontSize: 14.0,
                         ),
@@ -135,7 +182,7 @@ class _GiftPageState extends State<GiftPage> {
             SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                print('Friend added');
+                _addGift();
               },
               child: SizedBox(
                 width: double.infinity,

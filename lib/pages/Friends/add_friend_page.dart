@@ -11,18 +11,18 @@ class AddFriendPage extends StatefulWidget {
 }
 
 class _AddFriendPageState extends State<AddFriendPage> {
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _friendBirthdayDateController = TextEditingController();
+  TextEditingController _friendNameController = TextEditingController();
 
   void _addFriend() async {
-    final String name = _nameController.text;
-    final String birthdayStr = _dateController.text;
+    final String friendName = _friendNameController.text;
+    final String friendBirthdayDate = _friendBirthdayDateController.text;
 
-    if (name.isNotEmpty && birthdayStr.isNotEmpty) {
-      DateTime birthday = DateFormat('yyyy-MM-dd').parse(birthdayStr);
+    if (friendName.isNotEmpty && friendBirthdayDate.isNotEmpty) {
+      DateTime birthday = DateFormat('yyyy-MM-dd').parse(friendBirthdayDate);
 
-      final friend = Friend(name: name, birthday: birthday);
-      context.read<Database>().addFriend(friend);
+      final newFriend = Friend(name: friendName, birthday: birthday);
+      context.read<Database>().addFriend(newFriend);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -51,8 +51,8 @@ class _AddFriendPageState extends State<AddFriendPage> {
         child: Column(
           children: [
             FriendCard(
-              nameController: _nameController,
-              dateController: _dateController,
+              nameController: _friendNameController,
+              dateController: _friendBirthdayDateController,
             ),
             SizedBox(height: 16),
             ElevatedButton(

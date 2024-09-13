@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class SelectFriendsPage extends StatefulWidget {
+class GiftSelectFriendsPage extends StatefulWidget {
   final List<String> availableFriends;
 
-  SelectFriendsPage({required this.availableFriends});
+  GiftSelectFriendsPage({required this.availableFriends});
 
   @override
-  _SelectFriendsPageState createState() => _SelectFriendsPageState();
+  _GiftSelectFriendsPageState createState() => _GiftSelectFriendsPageState();
 }
 
-class _SelectFriendsPageState extends State<SelectFriendsPage> {
+class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
   List<String> selectedFriends = [];
 
   @override
@@ -65,9 +65,9 @@ class _SelectFriendsPageState extends State<SelectFriendsPage> {
         onPressed: () {
           Navigator.pop(context, selectedFriends);
         },
-        child: Icon(Icons.done),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        child: Icon(Icons.done),
       ),
     );
   }

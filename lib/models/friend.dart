@@ -1,4 +1,3 @@
-import 'package:birthday_planer/models/gift.dart';
 import 'package:isar/isar.dart';
 
 // this file is needed to generate file

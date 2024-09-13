@@ -17,13 +17,23 @@ const GiftSchema = CollectionSchema(
   name: r'Gift',
   id: -1012333367735251209,
   properties: {
-    r'name': PropertySchema(
+    r'description': PropertySchema(
       id: 0,
+      name: r'description',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 1,
       name: r'name',
       type: IsarType.string,
     ),
+    r'priceInEuro': PropertySchema(
+      id: 2,
+      name: r'priceInEuro',
+      type: IsarType.long,
+    ),
     r'url': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'url',
       type: IsarType.string,
     )
@@ -48,6 +58,12 @@ int _giftEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.description;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   {
     final value = object.url;
@@ -64,8 +80,10 @@ void _giftSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
-  writer.writeString(offsets[1], object.url);
+  writer.writeString(offsets[0], object.description);
+  writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.priceInEuro);
+  writer.writeString(offsets[3], object.url);
 }
 
 Gift _giftDeserialize(
@@ -75,8 +93,10 @@ Gift _giftDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Gift(
-    name: reader.readString(offsets[0]),
-    url: reader.readStringOrNull(offsets[1]),
+    description: reader.readStringOrNull(offsets[0]),
+    name: reader.readString(offsets[1]),
+    priceInEuro: reader.readLongOrNull(offsets[2]),
+    url: reader.readStringOrNull(offsets[3]),
   );
   object.id = id;
   return object;
@@ -90,8 +110,12 @@ P _giftDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -186,6 +210,152 @@ extension GiftQueryWhere on QueryBuilder<Gift, Gift, QWhereClause> {
 }
 
 extension GiftQueryFilter on QueryBuilder<Gift, Gift, QFilterCondition> {
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'description',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'description',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'description',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'description',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'description',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -366,6 +536,75 @@ extension GiftQueryFilter on QueryBuilder<Gift, Gift, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'priceInEuro',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'priceInEuro',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'priceInEuro',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'priceInEuro',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'priceInEuro',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> priceInEuroBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'priceInEuro',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterFilterCondition> urlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -516,6 +755,18 @@ extension GiftQueryObject on QueryBuilder<Gift, Gift, QFilterCondition> {}
 extension GiftQueryLinks on QueryBuilder<Gift, Gift, QFilterCondition> {}
 
 extension GiftQuerySortBy on QueryBuilder<Gift, Gift, QSortBy> {
+  QueryBuilder<Gift, Gift, QAfterSortBy> sortByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterSortBy> sortByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -525,6 +776,18 @@ extension GiftQuerySortBy on QueryBuilder<Gift, Gift, QSortBy> {
   QueryBuilder<Gift, Gift, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterSortBy> sortByPriceInEuro() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'priceInEuro', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterSortBy> sortByPriceInEuroDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'priceInEuro', Sort.desc);
     });
   }
 
@@ -542,6 +805,18 @@ extension GiftQuerySortBy on QueryBuilder<Gift, Gift, QSortBy> {
 }
 
 extension GiftQuerySortThenBy on QueryBuilder<Gift, Gift, QSortThenBy> {
+  QueryBuilder<Gift, Gift, QAfterSortBy> thenByDescription() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterSortBy> thenByDescriptionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -566,6 +841,18 @@ extension GiftQuerySortThenBy on QueryBuilder<Gift, Gift, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Gift, Gift, QAfterSortBy> thenByPriceInEuro() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'priceInEuro', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterSortBy> thenByPriceInEuroDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'priceInEuro', Sort.desc);
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterSortBy> thenByUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'url', Sort.asc);
@@ -580,10 +867,23 @@ extension GiftQuerySortThenBy on QueryBuilder<Gift, Gift, QSortThenBy> {
 }
 
 extension GiftQueryWhereDistinct on QueryBuilder<Gift, Gift, QDistinct> {
+  QueryBuilder<Gift, Gift, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Gift, Gift, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QDistinct> distinctByPriceInEuro() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'priceInEuro');
     });
   }
 
@@ -602,9 +902,21 @@ extension GiftQueryProperty on QueryBuilder<Gift, Gift, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Gift, String?, QQueryOperations> descriptionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'description');
+    });
+  }
+
   QueryBuilder<Gift, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Gift, int?, QQueryOperations> priceInEuroProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'priceInEuro');
     });
   }
 
