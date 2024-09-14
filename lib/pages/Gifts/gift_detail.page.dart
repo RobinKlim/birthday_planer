@@ -64,6 +64,30 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     Navigator.pop(context);
   }
 
+  void _deleteGift() async {
+    Gift gift = widget.gift;
+    final bool isGiftDeleted = await context.read<Database>().deleteGift(gift.id);
+
+    if (!mounted) return;
+
+    if (isGiftDeleted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${gift.name} deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${gift.name} not deleted'),
+          backgroundColor: Colors.grey,
+        ),
+      );
+    }
+    Navigator.pop(context);
+  }
+
   int? parseGiftPrice() {
     // TODO: offer globally
     if (_giftPriceInEurosController != null) {
@@ -82,6 +106,38 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
         title: Text(widget.gift.name),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            tooltip: 'Delete',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Confirm Deletion'),
+                    content: Text('The gift idea will be deleted pertmanently, are you sure you want to delete it?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text('Delete'),
+                        onPressed: () {
+                          _deleteGift();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(32.0),

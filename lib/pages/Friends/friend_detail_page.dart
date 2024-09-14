@@ -60,6 +60,30 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     }
   }
 
+  void _deleteFriend() async {
+    Friend friend = widget.friend;
+    final bool isFriendDeleted = await context.read<Database>().deleteFriend(friend.id);
+
+    if (!mounted) return;
+
+    if (isFriendDeleted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${friend.name} deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${friend.name} not deleted'),
+          backgroundColor: Colors.grey,
+        ),
+      );
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +91,38 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
         title: Text(widget.friend.name),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            tooltip: 'Delete',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Confirm Deletion'),
+                    content: Text('The gift idea will be deleted pertmanently, are you sure you want to delete it?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      ElevatedButton(
+                        child: Text('Delete'),
+                        onPressed: () {
+                          _deleteFriend();
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(32.0),

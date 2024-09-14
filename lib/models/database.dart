@@ -64,6 +64,13 @@ class Database extends ChangeNotifier {
   }
 
   // D E L E T E
+  Future<bool> deleteFriend(Id friendId) async {
+    // save to db
+    final isFriendDeleted = await isar.writeTxn(() => isar.friends.delete(friendId));
+    // re-read from db
+    await getAllFriends();
+    return isFriendDeleted;
+  }
 
   // G I F T - C A L L S
 
@@ -105,4 +112,11 @@ class Database extends ChangeNotifier {
   }
 
   // D E L E T E
+  Future<bool> deleteGift(Id giftId) async {
+    // save to db
+    final isGiftDeleted = await isar.writeTxn(() => isar.gifts.delete(giftId));
+    // re-read from db
+    await getAllGifts();
+    return isGiftDeleted;
+  }
 }

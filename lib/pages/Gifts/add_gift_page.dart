@@ -69,7 +69,7 @@ class _AddGiftPageState extends State<AddGiftPage> {
               giftLinkController: _giftUrlController,
               giftPriceInEurosController: _giftPriceInEurosController,
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 _addGift();
