@@ -61,6 +61,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
         ),
       );
     }
+    Navigator.pop(context);
   }
 
   int? parseGiftPrice() {

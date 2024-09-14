@@ -1,8 +1,8 @@
-import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/widgets/gift_card.dart';
 
 class AddGiftPage extends StatefulWidget {
   @override
@@ -21,29 +21,14 @@ class _AddGiftPageState extends State<AddGiftPage> {
 
   TextEditingController _giftNameController = TextEditingController();
   TextEditingController _giftDescriptionController = TextEditingController();
-  TextEditingController _giftLinkController = TextEditingController();
-  TextEditingController _giftPriceController = TextEditingController();
-
-  void _openSelectFriendsPage() async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GiftSelectFriendsPage(availableFriends: friendsList),
-      ),
-    );
-
-    if (result != null && result is List<String>) {
-      setState(() {
-        selectedFriends = result;
-      });
-    }
-  }
+  TextEditingController _giftUrlController = TextEditingController();
+  TextEditingController _giftPriceInEurosController = TextEditingController();
 
   void _addGift() async {
     final String giftName = _giftNameController.text;
     final String? giftDescription = _giftDescriptionController.text.isNotEmpty ? _giftDescriptionController.text : null;
-    final String? giftLink = _giftLinkController.text.isNotEmpty ? _giftLinkController.text : null;
-    final String? giftPrice = _giftPriceController.text.isNotEmpty ? _giftPriceController.text : null;
+    final String? giftLink = _giftUrlController.text.isNotEmpty ? _giftUrlController.text : null;
+    final String? giftPrice = _giftPriceInEurosController.text.isNotEmpty ? _giftPriceInEurosController.text : null;
     final int? giftPriceParsed = (giftPrice != null) ? int.tryParse(giftPrice) : null;
 
     print(giftPriceParsed.runtimeType);
@@ -78,85 +63,11 @@ class _AddGiftPageState extends State<AddGiftPage> {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Card(
-              color: Theme.of(context).colorScheme.onPrimary,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: _giftNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                        labelStyle: TextStyle(
-                          fontSize: 20.0,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    Divider(),
-                    TextField(
-                      controller: _giftDescriptionController,
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        labelStyle: TextStyle(
-                          fontSize: 14.0,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    TextField(
-                      controller: _giftLinkController,
-                      decoration: InputDecoration(
-                        labelText: 'Link',
-                        labelStyle: TextStyle(
-                          fontSize: 14.0,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    TextField(
-                      controller: _giftPriceController,
-                      decoration: InputDecoration(
-                        labelText: 'Price (€)',
-                        labelStyle: TextStyle(
-                          fontSize: 14.0,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    Wrap(
-                      alignment: WrapAlignment.start,
-                      spacing: 8.0,
-                      children: selectedFriends.map((friend) {
-                        return Chip(
-                          label: Text(friend),
-                          onDeleted: () {
-                            setState(() {
-                              selectedFriends.remove(friend);
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    TextButton(
-                      onPressed: _openSelectFriendsPage,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.touch_app),
-                          SizedBox(width: 8),
-                          Text('Select Friends'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            GiftCard(
+              giftNameController: _giftNameController,
+              giftDescriptionController: _giftDescriptionController,
+              giftLinkController: _giftUrlController,
+              giftPriceInEurosController: _giftPriceInEurosController,
             ),
             SizedBox(height: 32),
             ElevatedButton(
