@@ -11,7 +11,7 @@ class FriendCard extends StatefulWidget {
         _friendNameController = friendNameController;
 
   @override
-  _FriendCardState createState() => _FriendCardState();
+  State<FriendCard> createState() => _FriendCardState();
 }
 
 class _FriendCardState extends State<FriendCard> {

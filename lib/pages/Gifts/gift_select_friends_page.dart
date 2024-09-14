@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/database.dart';
+import 'package:provider/provider.dart';
 
 class GiftSelectFriendsPage extends StatefulWidget {
-  final List<String> availableFriends;
-
-  GiftSelectFriendsPage({required this.availableFriends});
-
   @override
-  _GiftSelectFriendsPageState createState() => _GiftSelectFriendsPageState();
+  State<GiftSelectFriendsPage> createState() => _GiftSelectFriendsPageState();
 }
 
 class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
-  List<String> selectedFriends = [];
+  Set<int> selectedFriendIds = {};
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<Database>().getAllFriends();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final database = context.watch<Database>();
+    List<Friend> friends = database.currentFriends;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Friends'),
@@ -23,17 +31,16 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Fixed selected friends list at the top
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Wrap(
               spacing: 8.0,
-              children: selectedFriends.map((friend) {
+              children: friends.where((friend) => selectedFriendIds.contains(friend.id)).map((friend) {
                 return Chip(
-                  label: Text(friend),
+                  label: Text(friend.name),
                   onDeleted: () {
                     setState(() {
-                      selectedFriends.remove(friend);
+                      selectedFriendIds.remove(friend.id);
                     });
                   },
                 );
@@ -42,16 +49,16 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
           ),
           Expanded(
             child: ListView(
-              children: widget.availableFriends.map((friend) {
+              children: friends.map((friend) {
                 return CheckboxListTile(
-                  title: Text(friend),
-                  value: selectedFriends.contains(friend),
+                  title: Text(friend.name),
+                  value: selectedFriendIds.contains(friend.id),
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
-                        selectedFriends.add(friend);
+                        selectedFriendIds.add(friend.id);
                       } else {
-                        selectedFriends.remove(friend);
+                        selectedFriendIds.remove(friend.id);
                       }
                     });
                   },
@@ -63,6 +70,7 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final List<Friend> selectedFriends = friends.where((friend) => selectedFriendIds.contains(friend.id)).toList();
           Navigator.pop(context, selectedFriends);
         },
         backgroundColor: Theme.of(context).colorScheme.primary,

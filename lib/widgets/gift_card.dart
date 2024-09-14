@@ -1,5 +1,7 @@
+import 'package:birthday_planer/models/friend.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
+import 'package:flutter/services.dart';
 
 class GiftCard extends StatefulWidget {
   final TextEditingController _giftNameController;
@@ -18,28 +20,21 @@ class GiftCard extends StatefulWidget {
         _giftPriceController = giftPriceInEurosController;
 
   @override
-  _GiftCardState createState() => _GiftCardState();
+  State<GiftCard> createState() => _GiftCardState();
 }
 
 class _GiftCardState extends State<GiftCard> {
-  List<String> selectedFriends = [];
-  List<String> friendsList = [
-    'Alice',
-    'Bob',
-    'Charlie',
-    'David',
-    'Emma',
-  ];
+  List<Friend> selectedFriends = [];
 
   void _openSelectFriendsPage() async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => GiftSelectFriendsPage(availableFriends: friendsList),
+        builder: (context) => GiftSelectFriendsPage(),
       ),
     );
 
-    if (result != null && result is List<String>) {
+    if (result != null && result is List<Friend>) {
       setState(() {
         selectedFriends = result;
       });
@@ -88,6 +83,10 @@ class _GiftCardState extends State<GiftCard> {
             ),
             TextField(
               controller: widget._giftPriceController,
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly,
+              ],
               decoration: InputDecoration(
                 labelText: 'Price (€)',
                 labelStyle: TextStyle(
@@ -101,7 +100,7 @@ class _GiftCardState extends State<GiftCard> {
               spacing: 8.0,
               children: selectedFriends.map((friend) {
                 return Chip(
-                  label: Text(friend),
+                  label: Text(friend.name),
                   onDeleted: () {
                     setState(() {
                       selectedFriends.remove(friend);

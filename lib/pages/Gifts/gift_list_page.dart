@@ -14,10 +14,6 @@ class _GiftListPageState extends State<GiftListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    readGifts();
-  }
-
-  void readGifts() {
     context.watch<Database>().getAllGifts();
   }
 
