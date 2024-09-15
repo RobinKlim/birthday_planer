@@ -19,8 +19,7 @@ class _GiftListPageState extends State<GiftListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final database = context.watch<Database>();
-    List<Gift> gifts = database.currentGifts;
+    List<Gift> gifts = context.watch<Database>().currentGifts;
 
     return Scaffold(
       appBar: AppBar(

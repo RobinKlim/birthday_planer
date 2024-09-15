@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
+import 'package:birthday_planer/models/selected_friends.dart';
 
 class GiftSelectFriendsPage extends StatefulWidget {
   @override
@@ -9,8 +10,6 @@ class GiftSelectFriendsPage extends StatefulWidget {
 }
 
 class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
-  Set<int> selectedFriendIds = {};
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -19,8 +18,9 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final database = context.watch<Database>();
-    List<Friend> friends = database.currentFriends;
+    List<Friend> friends = context.watch<Database>().currentFriends;
+    final selectedFriendsModel = context.watch<SelectedFriendsModel>();
+    Set<int> selectedFriendIds = selectedFriendsModel.selectedFriends.map((friend) => friend.id).toSet();
 
     return Scaffold(
       appBar: AppBar(
@@ -35,12 +35,12 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
             padding: const EdgeInsets.all(8.0),
             child: Wrap(
               spacing: 8.0,
-              children: friends.where((friend) => selectedFriendIds.contains(friend.id)).map((friend) {
+              children: selectedFriendsModel.selectedFriends.map((friend) {
                 return Chip(
                   label: Text(friend.name),
                   onDeleted: () {
                     setState(() {
-                      selectedFriendIds.remove(friend.id);
+                      selectedFriendsModel.removeFriend(friend);
                     });
                   },
                 );
@@ -56,9 +56,9 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
-                        selectedFriendIds.add(friend.id);
+                        selectedFriendsModel.addFriend(friend);
                       } else {
-                        selectedFriendIds.remove(friend.id);
+                        selectedFriendsModel.removeFriend(friend);
                       }
                     });
                   },
@@ -70,8 +70,7 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final List<Friend> selectedFriends = friends.where((friend) => selectedFriendIds.contains(friend.id)).toList();
-          Navigator.pop(context, selectedFriends);
+          Navigator.pop(context, selectedFriendsModel.selectedFriends);
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

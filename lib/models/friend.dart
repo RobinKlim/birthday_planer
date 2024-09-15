@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 
 // this file is needed to generate file
-// then run: flutter pub run build_runner build
+// then run: dart run build_runner build
 part 'friend.g.dart';
 
 @collection

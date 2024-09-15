@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/navigation_widget.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
+import 'package:birthday_planer/models/selected_friends.dart';
 
 void main() async {
   // Datenbank initialisieren
@@ -9,8 +10,16 @@ void main() async {
   final db = Database();
   await db.initialize();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => Database(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => Database(),
+      ),
+      ChangeNotifierProvider(
+        // TODO: Put further down the widget tree
+        create: (context) => SelectedFriendsModel(),
+      ),
+    ],
     child: const MyApp(),
   ));
 }

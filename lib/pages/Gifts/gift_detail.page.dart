@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/gift_card.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
+import 'package:birthday_planer/models/friend.dart';
 
 class GiftDetailPage extends StatefulWidget {
   final Gift gift;
@@ -18,6 +19,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   late TextEditingController? _giftDescriptionController;
   late TextEditingController? _giftUrlController;
   late TextEditingController? _giftPriceInEurosController;
+  List<Friend> assignedFriends = [];
 
   @override
   void initState() {
@@ -42,6 +44,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.gift.description = _giftDescriptionController?.text;
     widget.gift.url = _giftUrlController?.text;
     widget.gift.priceInEuro = parseGiftPrice();
+    widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
+
     final Gift? updatedGift = await context.read<Database>().updateGift(widget.gift);
 
     if (!mounted) return;
@@ -89,7 +93,6 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   }
 
   int? parseGiftPrice() {
-    // TODO: offer globally
     if (_giftPriceInEurosController != null) {
       int? giftPriceInEuros = int.tryParse(_giftPriceInEurosController!.text);
       if (giftPriceInEuros != null) {
@@ -116,7 +119,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text('Confirm Deletion'),
-                    content: Text('The gift idea will be deleted pertmanently, are you sure you want to delete it?'),
+                    content: Text('The gift idea will be deleted permanently, are you sure you want to delete it?'),
                     actions: <Widget>[
                       TextButton(
                         child: Text('Cancel'),

@@ -2,8 +2,10 @@ import 'package:birthday_planer/models/friend.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:birthday_planer/models/selected_friends.dart';
 
-class GiftCard extends StatefulWidget {
+class GiftCard extends StatelessWidget {
   final TextEditingController _giftNameController;
   final TextEditingController? _giftDescriptionController;
   final TextEditingController? _giftLinkController;
@@ -19,30 +21,18 @@ class GiftCard extends StatefulWidget {
         _giftLinkController = giftLinkController,
         _giftPriceController = giftPriceInEurosController;
 
-  @override
-  State<GiftCard> createState() => _GiftCardState();
-}
-
-class _GiftCardState extends State<GiftCard> {
-  List<Friend> selectedFriends = [];
-
-  void _openSelectFriendsPage() async {
-    final result = await Navigator.push(
+  void _openSelectFriendsPage(BuildContext context) async {
+    await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => GiftSelectFriendsPage(),
-      ),
+      MaterialPageRoute(builder: (context) => GiftSelectFriendsPage()),
     );
-
-    if (result != null && result is List<Friend>) {
-      setState(() {
-        selectedFriends = result;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Use Provider to get the friends from the model
+    final List<Friend> assignedFriends = context.watch<SelectedFriendsModel>().selectedFriends;
+
     return Card(
       color: Theme.of(context).colorScheme.onPrimary,
       child: Padding(
@@ -51,69 +41,57 @@ class _GiftCardState extends State<GiftCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: widget._giftNameController,
+              controller: _giftNameController,
               decoration: InputDecoration(
                 labelText: 'Name',
-                labelStyle: TextStyle(
-                  fontSize: 20.0,
-                ),
+                labelStyle: TextStyle(fontSize: 20.0),
                 border: InputBorder.none,
               ),
             ),
             Divider(),
             TextField(
-              controller: widget._giftDescriptionController,
+              controller: _giftDescriptionController,
               decoration: InputDecoration(
                 labelText: 'Description',
-                labelStyle: TextStyle(
-                  fontSize: 14.0,
-                ),
+                labelStyle: TextStyle(fontSize: 14.0),
                 border: InputBorder.none,
               ),
             ),
             TextField(
-              controller: widget._giftLinkController,
+              controller: _giftLinkController,
               decoration: InputDecoration(
                 labelText: 'Link',
-                labelStyle: TextStyle(
-                  fontSize: 14.0,
-                ),
+                labelStyle: TextStyle(fontSize: 14.0),
                 border: InputBorder.none,
               ),
             ),
             TextField(
-              controller: widget._giftPriceController,
+              controller: _giftPriceController,
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.digitsOnly,
               ],
               decoration: InputDecoration(
                 labelText: 'Price (€)',
-                labelStyle: TextStyle(
-                  fontSize: 14.0,
-                ),
+                labelStyle: TextStyle(fontSize: 14.0),
                 border: InputBorder.none,
               ),
             ),
             Wrap(
               alignment: WrapAlignment.start,
               spacing: 8.0,
-              children: selectedFriends.map((friend) {
+              children: assignedFriends.map((friend) {
                 return Chip(
                   label: Text(friend.name),
                   onDeleted: () {
-                    setState(() {
-                      selectedFriends.remove(friend);
-                    });
+                    context.read<SelectedFriendsModel>().removeFriend(friend);
                   },
                 );
               }).toList(),
             ),
             TextButton(
-              onPressed: _openSelectFriendsPage,
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-              ),
+              onPressed: () => _openSelectFriendsPage(context),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -1,10 +1,7 @@
-// import 'package:birthday_planer/models/friend.dart';
-import 'dart:ffi';
-
 import 'package:isar/isar.dart';
 
 // this file is needed to generate file
-// then run: flutter pub run build_runner build
+// then run: dart run build_runner build
 part 'gift.g.dart';
 
 @collection
@@ -14,13 +11,13 @@ class Gift {
   String? url;
   String? description;
   int? priceInEuro;
-  // List<Friend>? assignedFriends;
+  List<Id>? assignedFriendIds;
 
   Gift({
     required this.name,
     this.description,
     this.url,
     this.priceInEuro,
-    //  this.assignedFriends,
+    this.assignedFriendIds,
   });
 }

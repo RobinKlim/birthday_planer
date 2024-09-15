@@ -17,23 +17,28 @@ const GiftSchema = CollectionSchema(
   name: r'Gift',
   id: -1012333367735251209,
   properties: {
-    r'description': PropertySchema(
+    r'assignedFriendIds': PropertySchema(
       id: 0,
+      name: r'assignedFriendIds',
+      type: IsarType.longList,
+    ),
+    r'description': PropertySchema(
+      id: 1,
       name: r'description',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'priceInEuro': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'priceInEuro',
       type: IsarType.long,
     ),
     r'url': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'url',
       type: IsarType.string,
     )
@@ -59,6 +64,12 @@ int _giftEstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.assignedFriendIds;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
+  {
     final value = object.description;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -80,10 +91,11 @@ void _giftSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.description);
-  writer.writeString(offsets[1], object.name);
-  writer.writeLong(offsets[2], object.priceInEuro);
-  writer.writeString(offsets[3], object.url);
+  writer.writeLongList(offsets[0], object.assignedFriendIds);
+  writer.writeString(offsets[1], object.description);
+  writer.writeString(offsets[2], object.name);
+  writer.writeLong(offsets[3], object.priceInEuro);
+  writer.writeString(offsets[4], object.url);
 }
 
 Gift _giftDeserialize(
@@ -93,10 +105,11 @@ Gift _giftDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Gift(
-    description: reader.readStringOrNull(offsets[0]),
-    name: reader.readString(offsets[1]),
-    priceInEuro: reader.readLongOrNull(offsets[2]),
-    url: reader.readStringOrNull(offsets[3]),
+    assignedFriendIds: reader.readLongList(offsets[0]),
+    description: reader.readStringOrNull(offsets[1]),
+    name: reader.readString(offsets[2]),
+    priceInEuro: reader.readLongOrNull(offsets[3]),
+    url: reader.readStringOrNull(offsets[4]),
   );
   object.id = id;
   return object;
@@ -110,12 +123,14 @@ P _giftDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongList(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -210,6 +225,166 @@ extension GiftQueryWhere on QueryBuilder<Gift, Gift, QWhereClause> {
 }
 
 extension GiftQueryFilter on QueryBuilder<Gift, Gift, QFilterCondition> {
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> assignedFriendIdsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'assignedFriendIds',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> assignedFriendIdsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'assignedFriendIds',
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'assignedFriendIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'assignedFriendIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'assignedFriendIds',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'assignedFriendIds',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition> assignedFriendIdsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Gift, Gift, QAfterFilterCondition>
+      assignedFriendIdsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'assignedFriendIds',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<Gift, Gift, QAfterFilterCondition> descriptionIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -867,6 +1042,12 @@ extension GiftQuerySortThenBy on QueryBuilder<Gift, Gift, QSortThenBy> {
 }
 
 extension GiftQueryWhereDistinct on QueryBuilder<Gift, Gift, QDistinct> {
+  QueryBuilder<Gift, Gift, QDistinct> distinctByAssignedFriendIds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'assignedFriendIds');
+    });
+  }
+
   QueryBuilder<Gift, Gift, QDistinct> distinctByDescription(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -899,6 +1080,12 @@ extension GiftQueryProperty on QueryBuilder<Gift, Gift, QQueryProperty> {
   QueryBuilder<Gift, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Gift, List<int>?, QQueryOperations> assignedFriendIdsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'assignedFriendIds');
     });
   }
 

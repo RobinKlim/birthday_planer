@@ -14,17 +14,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    readFriends();
-  }
-
-  void readFriends() {
     context.watch<Database>().getAllFriends();
   }
 
   @override
   Widget build(BuildContext context) {
-    final database = context.watch<Database>();
-    List<Friend> friends = database.currentFriends;
+    List<Friend> friends = context.watch<Database>().currentFriends;
 
     return Scaffold(
       appBar: AppBar(

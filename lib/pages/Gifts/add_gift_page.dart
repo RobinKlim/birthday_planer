@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:birthday_planer/models/gift.dart';
 import 'package:birthday_planer/widgets/gift_card.dart';
+import 'package:birthday_planer/models/friend.dart';
 
 class AddGiftPage extends StatefulWidget {
   @override
@@ -10,14 +11,7 @@ class AddGiftPage extends StatefulWidget {
 }
 
 class _AddGiftPageState extends State<AddGiftPage> {
-  List<String> selectedFriends = [];
-  List<String> friendsList = [
-    'Alice',
-    'Bob',
-    'Charlie',
-    'David',
-    'Emma',
-  ];
+  List<Friend> assignedFriends = [];
 
   TextEditingController _giftNameController = TextEditingController();
   TextEditingController _giftDescriptionController = TextEditingController();
@@ -30,8 +24,6 @@ class _AddGiftPageState extends State<AddGiftPage> {
     final String? giftLink = _giftUrlController.text.isNotEmpty ? _giftUrlController.text : null;
     final String? giftPrice = _giftPriceInEurosController.text.isNotEmpty ? _giftPriceInEurosController.text : null;
     final int? giftPriceParsed = (giftPrice != null) ? int.tryParse(giftPrice) : null;
-
-    print(giftPriceParsed.runtimeType);
 
     if (giftName.isNotEmpty) {
       final newGift = Gift(name: giftName, description: giftDescription, url: giftLink, priceInEuro: giftPriceParsed);

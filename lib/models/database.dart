@@ -105,6 +105,7 @@ class Database extends ChangeNotifier {
     if (giftDB != null) {
       await isar.writeTxn(() => isar.gifts.put(gift));
       final updatedGift = await isar.gifts.get(gift.id);
+      print(updatedGift?.assignedFriendIds);
       await getAllGifts();
       return updatedGift;
     }
