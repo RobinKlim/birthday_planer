@@ -1,9 +1,10 @@
 import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/friend.dart';
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/gift_card.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
-import 'package:birthday_planer/models/friend.dart';
+import 'package:flutter/services.dart';
+import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 
 class GiftDetailPage extends StatefulWidget {
   final Gift gift;
@@ -28,6 +29,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     _giftDescriptionController = TextEditingController(text: widget.gift.description);
     _giftUrlController = TextEditingController(text: widget.gift.url);
     _giftPriceInEurosController = TextEditingController(text: widget.gift.priceInEuro.toString());
+    initAssignedFriends();
   }
 
   @override
@@ -39,6 +41,39 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     super.dispose();
   }
 
+  void initAssignedFriends() async {
+    final database = context.read<Database>();
+    if (widget.gift.assignedFriendIds != null) {
+      List<Friend> friendsToBeAssigned = [];
+      for (final friendId in widget.gift.assignedFriendIds!) {
+        final Friend? friend = await database.getFriendById(friendId);
+        if (friend != null) {
+          friendsToBeAssigned.add(friend);
+        }
+      }
+      setState(() {
+        assignedFriends = friendsToBeAssigned;
+      });
+    }
+  }
+
+  void _openSelectFriendsPage(BuildContext context) async {
+    final List<Friend>? updatedFriends = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GiftSelectFriendsPage(
+          assignedFriends: assignedFriends,
+        ),
+      ),
+    );
+
+    if (updatedFriends != null) {
+      setState(() {
+        assignedFriends = updatedFriends;
+      });
+    }
+  }
+
   void _updateGift() async {
     widget.gift.name = _giftNameController.text;
     widget.gift.description = _giftDescriptionController?.text;
@@ -47,7 +82,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
 
     final Gift? updatedGift = await context.read<Database>().updateGift(widget.gift);
-
+    print(updatedGift?.assignedFriendIds);
     if (!mounted) return;
 
     if (updatedGift != null) {
@@ -66,6 +101,12 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
       );
     }
     Navigator.pop(context);
+  }
+
+  void removeFriend(Friend friend) {
+    setState(() {
+      assignedFriends.remove(friend);
+    });
   }
 
   void _deleteGift() async {
@@ -146,11 +187,77 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            GiftCard(
-              giftNameController: _giftNameController,
-              giftDescriptionController: _giftDescriptionController,
-              giftLinkController: _giftUrlController,
-              giftPriceInEurosController: _giftPriceInEurosController,
+            Card(
+              color: Theme.of(context).colorScheme.onPrimary,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _giftNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: TextStyle(fontSize: 20.0),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    Divider(),
+                    TextField(
+                      controller: _giftDescriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'Description',
+                        labelStyle: TextStyle(fontSize: 14.0),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    TextField(
+                      controller: _giftUrlController,
+                      decoration: InputDecoration(
+                        labelText: 'Link',
+                        labelStyle: TextStyle(fontSize: 14.0),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    TextField(
+                      controller: _giftPriceInEurosController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: InputDecoration(
+                        labelText: 'Price (€)',
+                        labelStyle: TextStyle(fontSize: 14.0),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 8.0,
+                      children: assignedFriends.map((friend) {
+                        return Chip(
+                          label: Text(friend.name),
+                          onDeleted: () {
+                            removeFriend(friend);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    TextButton(
+                      onPressed: () => _openSelectFriendsPage(context),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.touch_app),
+                          SizedBox(width: 8),
+                          Text('Select Friends'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 16),
             ElevatedButton(

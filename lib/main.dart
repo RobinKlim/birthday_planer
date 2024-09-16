@@ -15,10 +15,6 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => Database(),
       ),
-      ChangeNotifierProvider(
-        // TODO: Put further down the widget tree
-        create: (context) => SelectedFriendsModel(),
-      ),
     ],
     child: const MyApp(),
   ));
