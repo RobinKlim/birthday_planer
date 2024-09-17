@@ -11,13 +11,13 @@ class Gift {
   String? url;
   String? description;
   int? priceInEuro;
-  List<Id>? assignedFriendIds;
+  List<Id> assignedFriendIds;
 
   Gift({
     required this.name,
     this.description,
     this.url,
     this.priceInEuro,
-    this.assignedFriendIds,
+    this.assignedFriendIds = const [],
   });
 }

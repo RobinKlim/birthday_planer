@@ -28,10 +28,10 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             icon: Icon(Icons.people),
             label: 'Friends',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
-          ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.calendar_today),
+          //   label: 'Calendar',
+          // ),
           NavigationDestination(
             icon: Icon(Icons.card_giftcard),
             label: 'Gifts',
@@ -40,7 +40,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
       ),
       body: <Widget>[
         FriendsListPage(),
-        CalendarPage(),
+        // CalendarPage(),
         GiftListPage(),
       ][currentPageIndex],
     );

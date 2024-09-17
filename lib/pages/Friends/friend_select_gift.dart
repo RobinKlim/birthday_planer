@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/gift.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 
-class GiftSelectFriendsPage extends StatefulWidget {
-  final List<Friend> assignedFriends;
+class FriendSelectGiftsPage extends StatefulWidget {
+  final List<Gift> assignedGifts;
 
-  GiftSelectFriendsPage({required this.assignedFriends});
+  FriendSelectGiftsPage({required this.assignedGifts});
 
   @override
-  State<GiftSelectFriendsPage> createState() => _GiftSelectFriendsPageState();
+  State<FriendSelectGiftsPage> createState() => _FriendSelectGiftsPageState();
 }
 
-class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
-  late List<Friend> selectedFriends;
+class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
+  late List<Gift> selectedGifts;
 
   @override
   void initState() {
     super.initState();
-    context.read<Database>().getAllFriends();
-    selectedFriends = List.from(widget.assignedFriends);
+    context.read<Database>().getAllGifts();
+    selectedGifts = List.from(widget.assignedGifts);
   }
 
-  void toggleFriendSelection(Friend friend) {
+  void toggleGiftSelection(Gift gift) {
     setState(() {
-      if (selectedFriends.any((selectedFriend) => selectedFriend.id == friend.id)) {
-        selectedFriends.removeWhere((selectedFriend) => selectedFriend.id == friend.id);
+      if (selectedGifts.any((selectedGift) => selectedGift.id == gift.id)) {
+        selectedGifts.removeWhere((selectedGift) => selectedGift.id == gift.id);
       } else {
-        selectedFriends.add(friend);
+        selectedGifts.add(gift);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Friend> friends = context.watch<Database>().currentFriends;
+    List<Gift> gifts = context.watch<Database>().currentGifts;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Friends'),
+        title: Text('Select Gifts'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, selectedFriends);
+            Navigator.pop(context, selectedGifts);
           },
         ),
       ),
@@ -55,12 +55,12 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
             padding: const EdgeInsets.all(8.0),
             child: Wrap(
               spacing: 8.0,
-              children: selectedFriends.map((friend) {
+              children: selectedGifts.map((gift) {
                 return Chip(
-                  label: Text(friend.name),
+                  label: Text(gift.name),
                   onDeleted: () {
                     setState(() {
-                      selectedFriends.remove(friend);
+                      selectedGifts.remove(gift);
                     });
                   },
                 );
@@ -69,12 +69,12 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
           ),
           Expanded(
             child: ListView(
-              children: friends.map((friend) {
+              children: gifts.map((gift) {
                 return CheckboxListTile(
-                  title: Text(friend.name),
-                  value: selectedFriends.any((selectedFriend) => selectedFriend.id == friend.id),
+                  title: Text(gift.name),
+                  value: selectedGifts.any((selectedGift) => selectedGift.id == gift.id),
                   onChanged: (bool? value) {
-                    toggleFriendSelection(friend);
+                    toggleGiftSelection(gift);
                   },
                 );
               }).toList(),
@@ -84,7 +84,7 @@ class _GiftSelectFriendsPageState extends State<GiftSelectFriendsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, selectedFriends);
+          Navigator.pop(context, selectedGifts);
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

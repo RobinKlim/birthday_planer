@@ -9,11 +9,7 @@ class Friend {
   Id id = Isar.autoIncrement;
   String name;
   DateTime birthday;
-  // Gift? gift;
+  List<Id> assignedGiftIds;
 
-  Friend({
-    required this.name,
-    required this.birthday,
-    //  this.gift,
-  });
+  Friend({required this.name, required this.birthday, this.assignedGiftIds = const []});
 }

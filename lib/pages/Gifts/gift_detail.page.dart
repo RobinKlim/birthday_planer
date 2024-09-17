@@ -28,7 +28,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     _giftNameController = TextEditingController(text: widget.gift.name);
     _giftDescriptionController = TextEditingController(text: widget.gift.description);
     _giftUrlController = TextEditingController(text: widget.gift.url);
-    _giftPriceInEurosController = TextEditingController(text: widget.gift.priceInEuro.toString());
+    _giftPriceInEurosController = TextEditingController(text: widget.gift.priceInEuro != null ? widget.gift.priceInEuro.toString() : '');
     initAssignedFriends();
   }
 
@@ -43,7 +43,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
 
   void initAssignedFriends() async {
     final database = context.read<Database>();
-    if (widget.gift.assignedFriendIds != null) {
+    if (widget.gift.assignedFriendIds.isNotEmpty) {
       List<Friend> friendsToBeAssigned = [];
       for (final friendId in widget.gift.assignedFriendIds!) {
         final Friend? friend = await database.getFriendById(friendId);
@@ -58,7 +58,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   }
 
   void _openSelectFriendsPage(BuildContext context) async {
-    final List<Friend>? updatedFriends = await Navigator.push(
+    List<Friend> updatedFriends = [];
+    updatedFriends = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => GiftSelectFriendsPage(
@@ -67,7 +68,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
       ),
     );
 
-    if (updatedFriends != null) {
+    if (updatedFriends.isNotEmpty) {
       setState(() {
         assignedFriends = updatedFriends;
       });
@@ -88,7 +89,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     if (updatedGift != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${updatedGift.name} updated successfully!'),
+          content: Text("${updatedGift.name} updated successfully!"),
           backgroundColor: Colors.green,
         ),
       );

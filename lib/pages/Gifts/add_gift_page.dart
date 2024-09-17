@@ -19,6 +19,15 @@ class _AddGiftPageState extends State<AddGiftPage> {
   TextEditingController _giftUrlController = TextEditingController();
   TextEditingController _giftPriceInEurosController = TextEditingController();
 
+  @override
+  void dispose() {
+    _giftNameController.dispose();
+    _giftDescriptionController.dispose();
+    _giftUrlController.dispose();
+    _giftPriceInEurosController.dispose();
+    super.dispose();
+  }
+
   void removeFriend(Friend friend) {
     setState(() {
       assignedFriends.remove(friend);

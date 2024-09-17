@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/widgets/navigation_widget.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
-import 'package:birthday_planer/models/selected_friends.dart';
 
 void main() async {
   // Datenbank initialisieren

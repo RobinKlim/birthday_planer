@@ -1,8 +1,9 @@
+import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/friend_card.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
+import 'package:birthday_planer/pages/Friends/friend_select_gift.dart';
 
 class FriendDetailPage extends StatefulWidget {
   final Friend friend;
@@ -14,30 +15,72 @@ class FriendDetailPage extends StatefulWidget {
 }
 
 class _FriendDetailPageState extends State<FriendDetailPage> {
-  late TextEditingController _nameController;
-  late TextEditingController _dateController;
+  late TextEditingController _friendNameController;
+  late TextEditingController _friendDateController;
+  List<Gift> assignedGifts = [];
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.friend.name);
-    _dateController = TextEditingController(
+    _friendNameController = TextEditingController(text: widget.friend.name);
+    _friendDateController = TextEditingController(
       text: widget.friend.birthday.toLocal().toIso8601String().split('T')[0],
     );
+    initAssignedGifts();
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _dateController.dispose();
+    _friendNameController.dispose();
+    _friendDateController.dispose();
     super.dispose();
   }
 
-  void _updateFriend() async {
-    DateTime updatedBirthday = DateTime.parse(_dateController.text);
+  void _openSelectGiftsPage(BuildContext context) async {
+    final List<Gift> updatedGifts = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendSelectGiftsPage(
+          assignedGifts: assignedGifts,
+        ),
+      ),
+    );
 
-    widget.friend.name = _nameController.text;
+    if (updatedGifts.isNotEmpty) {
+      setState(() {
+        assignedGifts = updatedGifts;
+      });
+    }
+  }
+
+  void removeGift(Gift gift) {
+    setState(() {
+      assignedGifts.remove(gift);
+    });
+  }
+
+  void initAssignedGifts() async {
+    final database = context.read<Database>();
+    if (widget.friend.assignedGiftIds.isNotEmpty) {
+      List<Gift> giftsToBeAssigned = [];
+      for (final giftid in widget.friend.assignedGiftIds!) {
+        final Gift? gift = await database.getGiftById(giftid);
+        if (gift != null) {
+          giftsToBeAssigned.add(gift);
+        }
+      }
+      setState(() {
+        assignedGifts = giftsToBeAssigned;
+      });
+    }
+  }
+
+  void _updateFriend() async {
+    DateTime updatedBirthday = DateTime.parse(_friendDateController.text);
+
+    widget.friend.name = _friendNameController.text;
     widget.friend.birthday = updatedBirthday;
+    widget.friend.assignedGiftIds = assignedGifts.map((gift) => gift.id).toList();
 
     final Friend? updatedFriend = await context.read<Database>().updateFriend(widget.friend);
 
@@ -58,6 +101,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
         ),
       );
     }
+    Navigator.pop(context);
   }
 
   void _deleteFriend() async {
@@ -82,6 +126,18 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
       );
     }
     Navigator.pop(context);
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      _friendDateController.text = "${pickedDate.toLocal()}".split(' ')[0];
+    }
   }
 
   @override
@@ -128,9 +184,59 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            FriendCard(
-              friendNameController: _nameController,
-              friendDateController: _dateController,
+            Card(
+              color: Theme.of(context).colorScheme.onPrimary,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _friendNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: AbsorbPointer(
+                        child: TextField(
+                          controller: _friendDateController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            labelText: 'Birthday',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 8.0,
+                      children: assignedGifts.map((gift) {
+                        return Chip(
+                          label: Text(gift.name),
+                          onDeleted: () {
+                            removeGift(gift);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    TextButton(
+                      onPressed: () => _openSelectGiftsPage(context),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.card_giftcard),
+                          SizedBox(width: 8),
+                          Text('Select Gifts for ${widget.friend.name}'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 16),
             ElevatedButton(

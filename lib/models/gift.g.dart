@@ -63,12 +63,7 @@ int _giftEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.assignedFriendIds;
-    if (value != null) {
-      bytesCount += 3 + value.length * 8;
-    }
-  }
+  bytesCount += 3 + object.assignedFriendIds.length * 8;
   {
     final value = object.description;
     if (value != null) {
@@ -105,7 +100,7 @@ Gift _giftDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Gift(
-    assignedFriendIds: reader.readLongList(offsets[0]),
+    assignedFriendIds: reader.readLongList(offsets[0]) ?? const [],
     description: reader.readStringOrNull(offsets[1]),
     name: reader.readString(offsets[2]),
     priceInEuro: reader.readLongOrNull(offsets[3]),
@@ -123,7 +118,7 @@ P _giftDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongList(offset)) as P;
+      return (reader.readLongList(offset) ?? const []) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
@@ -225,22 +220,6 @@ extension GiftQueryWhere on QueryBuilder<Gift, Gift, QWhereClause> {
 }
 
 extension GiftQueryFilter on QueryBuilder<Gift, Gift, QFilterCondition> {
-  QueryBuilder<Gift, Gift, QAfterFilterCondition> assignedFriendIdsIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'assignedFriendIds',
-      ));
-    });
-  }
-
-  QueryBuilder<Gift, Gift, QAfterFilterCondition> assignedFriendIdsIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'assignedFriendIds',
-      ));
-    });
-  }
-
   QueryBuilder<Gift, Gift, QAfterFilterCondition>
       assignedFriendIdsElementEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
@@ -1083,7 +1062,7 @@ extension GiftQueryProperty on QueryBuilder<Gift, Gift, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Gift, List<int>?, QQueryOperations> assignedFriendIdsProperty() {
+  QueryBuilder<Gift, List<int>, QQueryOperations> assignedFriendIdsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'assignedFriendIds');
     });
