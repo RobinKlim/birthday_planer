@@ -14,7 +14,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<Database>().getAllFriends();
+    context.read<Database>().getAllFriends();
   }
 
   @override

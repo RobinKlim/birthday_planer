@@ -41,8 +41,40 @@ class Database extends ChangeNotifier {
   Future<void> getAllFriends() async {
     List<Friend> fetchedFriends = await isar.friends.where().findAll();
     currentFriends.clear();
-    currentFriends.addAll(fetchedFriends);
+    List<Friend> sortedFriends = sortFriendsByDaysUntilBirthday(fetchedFriends);
+    currentFriends.addAll(sortedFriends);
+
     notifyListeners();
+  }
+
+  List<Friend> sortFriendsByDaysUntilBirthday(List<Friend> friends) {
+    final now = DateTime.now();
+
+    DateTime calculateNextBirthday(DateTime birthday) {
+      DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
+      if (now.isAfter(nextBirthday) && !(now.day == nextBirthday.day && now.month == nextBirthday.month && now.year == nextBirthday.year)) {
+        nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
+      }
+      return nextBirthday;
+    }
+
+    int daysBetween(DateTime from, DateTime to) {
+      from = DateTime(from.year, from.month, from.day);
+      to = DateTime(to.year, to.month, to.day);
+      return (to.difference(from).inHours / 24).round();
+    }
+
+    friends.sort((a, b) {
+      final DateTime nextBirthdayA = calculateNextBirthday(a.birthday);
+      final DateTime nextBirthdayB = calculateNextBirthday(b.birthday);
+
+      final int daysUntilBirthdayA = daysBetween(now, nextBirthdayA);
+      final int daysUntilBirthdayB = daysBetween(now, nextBirthdayB);
+
+      return daysUntilBirthdayA.compareTo(daysUntilBirthdayB);
+    });
+
+    return friends;
   }
 
   Future<Friend?> getFriendById(int id) async {

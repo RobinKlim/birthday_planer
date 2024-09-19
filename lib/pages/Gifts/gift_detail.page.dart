@@ -45,7 +45,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     final database = context.read<Database>();
     if (widget.gift.assignedFriendIds.isNotEmpty) {
       List<Friend> friendsToBeAssigned = [];
-      for (final friendId in widget.gift.assignedFriendIds!) {
+      for (final friendId in widget.gift.assignedFriendIds) {
         final Friend? friend = await database.getFriendById(friendId);
         if (friend != null) {
           friendsToBeAssigned.add(friend);
