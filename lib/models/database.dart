@@ -37,6 +37,21 @@ class Database extends ChangeNotifier {
     await getAllFriends();
   }
 
+  Future<int> addFriends(List<Friend> newFriends) async {
+    // TODO: check for duplicates before adding
+    int friendsAddedSum = 0;
+
+    await isar.writeTxn(() async {
+      for (var friend in newFriends) {
+        await isar.friends.put(friend);
+        friendsAddedSum++;
+      }
+    });
+    // Re-read all friends from the database
+    await getAllFriends();
+    return friendsAddedSum;
+  }
+
   // R E A D
   Future<void> getAllFriends() async {
     List<Friend> fetchedFriends = await isar.friends.where().findAll();

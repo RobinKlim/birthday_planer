@@ -17,18 +17,38 @@ class _AddFriendPageState extends State<AddFriendPage> {
   TextEditingController _friendBirthdayDateController = TextEditingController();
   TextEditingController _friendNameController = TextEditingController();
   List<Gift> assignedGifts = [];
-  List<Contact>? testContacts;
 
   void _addFriend(Friend friend) async {
-    context.read<Database>().addFriend(friend);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    await context.read<Database>().addFriend(friend);
+    if (!mounted) return;
+
+    scaffoldMessenger.showSnackBar(
       SnackBar(
         content: Text('Friend added successfully!'),
         backgroundColor: Colors.green,
       ),
     );
-    Navigator.pop(context);
+    navigator.pop(context);
+  }
+
+  void _addFriends(List<Friend> friends) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    int addedFriendsSum = await context.read<Database>().addFriends(friends);
+
+    if (!mounted) return;
+
+    scaffoldMessenger.showSnackBar(
+      SnackBar(
+        content: Text('$addedFriendsSum friends added from your contacts'),
+        backgroundColor: Colors.green,
+      ),
+    );
+    navigator.pop(context);
   }
 
   void removeGift(Gift gift) {
@@ -66,22 +86,36 @@ class _AddFriendPageState extends State<AddFriendPage> {
     }
   }
 
-  Future<void> importContacts() async {
+  Future<void> importContacts(BuildContext context) async {
     PermissionStatus permission = await Permission.contacts.request();
     print("permission: $permission");
     if (permission.isGranted) {
-      Iterable<Contact> contacts = await ContactsService.getContacts();
-      setState(() {
-        testContacts = contacts.toList();
-      });
+      Iterable<Contact> importedContacts = await ContactsService.getContacts();
 
-      testContacts?.forEach(
-        (element) {
-          print("testContacts.displayName: ${element.displayName}");
-        },
-      );
+      List<Friend> friendsList = importedContacts.where((importedContact) => importedContact.displayName != null).map((importedContact) {
+        if (importedContact.birthday == null) {
+          return Friend(
+            name: importedContact.displayName!,
+          );
+        } else {
+          return Friend(
+            name: importedContact.displayName!,
+            birthday: importedContact.birthday,
+          );
+        }
+      }).toList();
+      _addFriends(friendsList);
     } else {
-      print("Contacts permission denied");
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Contacts could not be imported. Permission to access contacts is required.'),
+          backgroundColor: Colors.grey,
+        ),
+      );
+
+      print("Contacts permission denied"); //TODO ask for permissions again if denied
     }
   }
 
@@ -102,7 +136,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                 ),
                 child: FloatingActionButton(
                   onPressed: () {
-                    importContacts();
+                    importContacts(context);
                   },
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   child: Icon(Icons.import_contacts, color: Theme.of(context).colorScheme.primary),
