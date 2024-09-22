@@ -11,9 +11,13 @@ class FriendListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final friendsService = FriendsService(); // Access the singleton instance
-    final int birthdayAge = friendsService.getBirthdayAge(friend);
-    final int daysUntilBirthday = friendsService.getDaysUntilBirthday(friend);
+    final friendsService = FriendsService();
+    int? birthdayAge;
+    int? daysUntilBirthday;
+    if (friend.birthday != null) {
+      daysUntilBirthday = friendsService.getDaysUntilBirthday(friend.birthday!);
+      birthdayAge = friendsService.getBirthdayAge(friend.birthday!);
+    }
     String getOrdinalSuffix(int number) {
       if (number >= 11 && number <= 13) {
         return 'th';
@@ -31,6 +35,7 @@ class FriendListItem extends StatelessWidget {
     }
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         Card(
           color: Theme.of(context).colorScheme.onPrimary,
@@ -38,8 +43,8 @@ class FriendListItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: ListTile(
-            title: Text(friend.name),
-            subtitle: Text(DateFormat.yMMMMd().format(friend.birthday)),
+            title: Text(friend.birthday != null ? '${friend.name} (${friendsService.getCurrentAge(friend.birthday!)})' : '${friend.name} (Add Birthday)'),
+            subtitle: friend.birthday != null ? Text(DateFormat.yMMMMd().format(friend.birthday!)) : Text('Birthday not added'),
             trailing: Icon(Icons.navigate_next),
             onTap: () {
               Navigator.push(
@@ -49,25 +54,27 @@ class FriendListItem extends StatelessWidget {
             },
           ),
         ),
-        if (daysUntilBirthday <= 30)
+        if (daysUntilBirthday != null && daysUntilBirthday <= 30)
           Positioned(
-            right: 0.0,
-            top: 0.0,
+            right: 0,
+            top: -6,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
-                color: Colors.blueGrey,
+                color: Colors.green,
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              child: Text(
-                daysUntilBirthday == 0
-                    ? '$birthdayAge${getOrdinalSuffix(birthdayAge)} birthday is today!'
-                    : '$birthdayAge${getOrdinalSuffix(birthdayAge)} birthday in $daysUntilBirthday days',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                ),
-              ),
+              child: friend.birthday != null
+                  ? Text(
+                      daysUntilBirthday == 0
+                          ? '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday is today!'
+                          : '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday in $daysUntilBirthday days',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.0,
+                      ),
+                    )
+                  : Container(),
             ),
           ),
       ],

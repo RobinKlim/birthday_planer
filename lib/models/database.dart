@@ -65,13 +65,24 @@ class Database extends ChangeNotifier {
     }
 
     friends.sort((a, b) {
-      final DateTime nextBirthdayA = calculateNextBirthday(a.birthday);
-      final DateTime nextBirthdayB = calculateNextBirthday(b.birthday);
+      final DateTime? birthdayA = a.birthday;
+      final DateTime? birthdayB = b.birthday;
 
-      final int daysUntilBirthdayA = daysBetween(now, nextBirthdayA);
-      final int daysUntilBirthdayB = daysBetween(now, nextBirthdayB);
+      if (birthdayA == null && birthdayB == null) {
+        return 0; // If both birthdays are null, consider them equal
+      } else if (birthdayA == null) {
+        return 1; // Move `a` to the end because its birthday is null
+      } else if (birthdayB == null) {
+        return -1; // Move `b` to the end because its birthday is null
+      } else {
+        final DateTime nextBirthdayA = calculateNextBirthday(birthdayA);
+        final DateTime nextBirthdayB = calculateNextBirthday(birthdayB);
 
-      return daysUntilBirthdayA.compareTo(daysUntilBirthdayB);
+        final int daysUntilBirthdayA = daysBetween(now, nextBirthdayA);
+        final int daysUntilBirthdayB = daysBetween(now, nextBirthdayB);
+
+        return daysUntilBirthdayA.compareTo(daysUntilBirthdayB);
+      }
     });
 
     return friends;

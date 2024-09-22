@@ -1,5 +1,3 @@
-import 'package:birthday_planer/models/friend.dart';
-
 class FriendsService {
   static final FriendsService _instance = FriendsService._internal();
 
@@ -9,26 +7,37 @@ class FriendsService {
 
   FriendsService._internal();
 
-  DateTime getNextBirthday(Friend friend) {
+  DateTime getNextBirthday(DateTime birthday) {
     final now = DateTime.now();
 
-    DateTime nextBirthday = DateTime(now.year, friend.birthday.month, friend.birthday.day);
+    DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
     if (now.isAfter(nextBirthday) && !(now.day == nextBirthday.day && now.month == nextBirthday.month && now.year == nextBirthday.year)) {
-      nextBirthday = DateTime(now.year + 1, friend.birthday.month, friend.birthday.day);
+      nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
     }
     return nextBirthday;
   }
 
-  int getDaysUntilBirthday(Friend friend) {
+  int getDaysUntilBirthday(DateTime birthday) {
     final now = DateTime.now();
-    final nextBirthday = getNextBirthday(friend);
+    final nextBirthday = getNextBirthday(birthday);
 
     DateTime from = DateTime(now.year, now.month, now.day);
     DateTime to = DateTime(nextBirthday.year, nextBirthday.month, nextBirthday.day);
     return (to.difference(from).inHours / 24).round();
   }
 
-  int getBirthdayAge(Friend friend) {
-    return getNextBirthday(friend).year - friend.birthday.year;
+  int getBirthdayAge(DateTime birthday) {
+    return getNextBirthday(birthday).year - birthday.year;
+  }
+
+  int getCurrentAge(DateTime birthday) {
+    final DateTime today = DateTime.now();
+    int age = today.year - birthday.year;
+
+    if (today.month < birthday.month || (today.month == birthday.month && today.day < birthday.day)) {
+      age--;
+    }
+
+    return age;
   }
 }

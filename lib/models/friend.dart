@@ -8,8 +8,8 @@ part 'friend.g.dart';
 class Friend {
   Id id = Isar.autoIncrement;
   String name;
-  DateTime birthday;
+  DateTime? birthday;
   List<Id> assignedGiftIds;
 
-  Friend({required this.name, required this.birthday, this.assignedGiftIds = const []});
+  Friend({required this.name, this.birthday, this.assignedGiftIds = const []});
 }

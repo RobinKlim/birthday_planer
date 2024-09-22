@@ -4,7 +4,6 @@ import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // Datenbank initialisieren
   WidgetsFlutterBinding.ensureInitialized();
   final db = Database();
   await db.initialize();
@@ -27,11 +26,15 @@ class MyApp extends StatelessWidget {
     final theme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Color.fromARGB(255, 56, 165, 184),
+        seedColor: Color.fromRGBO(145, 111, 161, 1),
         brightness: Brightness.light,
       ).copyWith(
-        primary: Color.fromARGB(255, 56, 165, 184),
+        primary: Color.fromRGBO(145, 111, 161, 1),
         onPrimary: Colors.white,
+        secondary: Color.fromRGBO(115, 179, 149, 1),
+        onSecondary: Colors.white,
+        tertiary: Color.fromRGBO(153, 138, 115, 1),
+        onTertiary: Colors.white,
         error: Colors.red,
         onError: Colors.white,
       ),

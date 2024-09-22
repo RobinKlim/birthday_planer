@@ -23,9 +23,13 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
   void initState() {
     super.initState();
     _friendNameController = TextEditingController(text: widget.friend.name);
-    _friendDateController = TextEditingController(
-      text: widget.friend.birthday.toLocal().toIso8601String().split('T')[0],
-    );
+    if (widget.friend.birthday != null) {
+      _friendDateController = TextEditingController(
+        text: widget.friend.birthday!.toLocal().toIso8601String().split('T')[0],
+      );
+    } else {
+      _friendDateController = TextEditingController(text: "birthday not added yet");
+    }
     initAssignedGifts();
   }
 
@@ -133,7 +137,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
       context: context,
       initialDate: DateTime(2000),
       firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      lastDate: DateTime.now(),
     );
     if (pickedDate != null) {
       _friendDateController.text = "${pickedDate.toLocal()}".split(' ')[0];

@@ -77,7 +77,7 @@ Friend _friendDeserialize(
 ) {
   final object = Friend(
     assignedGiftIds: reader.readLongList(offsets[0]) ?? const [],
-    birthday: reader.readDateTime(offsets[1]),
+    birthday: reader.readDateTimeOrNull(offsets[1]),
     name: reader.readString(offsets[2]),
   );
   object.id = id;
@@ -94,7 +94,7 @@ P _friendDeserializeProp<P>(
     case 0:
       return (reader.readLongList(offset) ?? const []) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     default:
@@ -334,8 +334,24 @@ extension FriendQueryFilter on QueryBuilder<Friend, Friend, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'birthday',
+      ));
+    });
+  }
+
+  QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'birthday',
+      ));
+    });
+  }
+
   QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayEqualTo(
-      DateTime value) {
+      DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'birthday',
@@ -345,7 +361,7 @@ extension FriendQueryFilter on QueryBuilder<Friend, Friend, QFilterCondition> {
   }
 
   QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -358,7 +374,7 @@ extension FriendQueryFilter on QueryBuilder<Friend, Friend, QFilterCondition> {
   }
 
   QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -371,8 +387,8 @@ extension FriendQueryFilter on QueryBuilder<Friend, Friend, QFilterCondition> {
   }
 
   QueryBuilder<Friend, Friend, QAfterFilterCondition> birthdayBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -671,7 +687,7 @@ extension FriendQueryProperty on QueryBuilder<Friend, Friend, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Friend, DateTime, QQueryOperations> birthdayProperty() {
+  QueryBuilder<Friend, DateTime?, QQueryOperations> birthdayProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'birthday');
     });
