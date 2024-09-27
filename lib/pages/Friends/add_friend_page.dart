@@ -22,15 +22,24 @@ class _AddFriendPageState extends State<AddFriendPage> {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    await context.read<Database>().addFriend(friend);
+    bool friendAdded = await context.read<Database>().addFriend(friend);
     if (!mounted) return;
 
-    scaffoldMessenger.showSnackBar(
-      SnackBar(
-        content: Text('Friend added successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
+    if (friendAdded) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Friend added successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Friend allready exists!'),
+          backgroundColor: Colors.grey,
+        ),
+      );
+    }
     navigator.pop(context);
   }
 
@@ -38,13 +47,15 @@ class _AddFriendPageState extends State<AddFriendPage> {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    int addedFriendsSum = await context.read<Database>().addFriends(friends);
+    Map<String, int> result = await context.read<Database>().addFriends(friends);
+    int addedFriendsSum = result['friendsAdded'] ?? 0;
+    int duplicatesCount = result['duplicatesCount'] ?? 0;
 
     if (!mounted) return;
 
     scaffoldMessenger.showSnackBar(
       SnackBar(
-        content: Text('$addedFriendsSum friends added from your contacts'),
+        content: Text('$addedFriendsSum friends added from your contacts. $duplicatesCount dublicates detected.'),
         backgroundColor: Colors.green,
       ),
     );

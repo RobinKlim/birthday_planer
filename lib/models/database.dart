@@ -29,27 +29,42 @@ class Database extends ChangeNotifier {
   final List<Friend> currentFriends = [];
 
   // C R E A T E
-  Future<void> addFriend(Friend newFriend) async {
-    // TODO: check for dublicates
-    // save to db
-    await isar.writeTxn(() => isar.friends.put(newFriend));
-    // re-read from db
-    await getAllFriends();
+  Future<bool> addFriend(Friend newFriend) async {
+    final Set<String> existingFriendNames = currentFriends.map((friend) => friend.name).toSet();
+    if (!existingFriendNames.contains(newFriend.name)) {
+      // save to db
+      await isar.writeTxn(() => isar.friends.put(newFriend));
+      // re-read from db
+      await getAllFriends();
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  Future<int> addFriends(List<Friend> newFriends) async {
-    // TODO: check for duplicates before adding
-    int friendsAddedSum = 0;
+  Future<Map<String, int>> addFriends(List<Friend> newFriends) async {
+    await getAllFriends();
+    final Set<String> existingFriendNames = currentFriends.map((friend) => friend.name).toSet();
+    final List<Friend> friendsCleanedForDuplicates = newFriends.where((friend) {
+      return !existingFriendNames.contains(friend.name);
+    }).toList();
+
+    int duplicatesCount = newFriends.length - friendsCleanedForDuplicates.length;
+    int friendsAddedCount = 0;
 
     await isar.writeTxn(() async {
-      for (var friend in newFriends) {
+      for (var friend in friendsCleanedForDuplicates) {
         await isar.friends.put(friend);
-        friendsAddedSum++;
+        friendsAddedCount++;
       }
     });
-    // Re-read all friends from the database
+
     await getAllFriends();
-    return friendsAddedSum;
+
+    return {
+      'friendsAdded': friendsAddedCount,
+      'duplicatesCount': duplicatesCount,
+    };
   }
 
   // R E A D
