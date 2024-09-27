@@ -23,7 +23,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   Widget build(BuildContext context) {
     List<Friend> friends = context.watch<Database>().currentFriends;
-    bool isDividerAdded = false;
+    bool isDividerAddedFirst = false;
+    bool isDividerAddedSecond = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,76 +58,114 @@ class _FriendsListPageState extends State<FriendsListPage> {
           child: Column(
             children: [
               Expanded(
-                child: friends.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("You haven't added any friends yet."),
-                            TextButton(
-                              onPressed: () => print("import friends"), // TODO actually import friends viaService (logic allread implemented in addFriend)
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.import_contacts),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Import from Contacts',
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: friends.length,
-                        itemBuilder: (context, index) {
-                          if (isDividerAdded || friends[index].birthday == null || friendsService.getDaysUntilBirthday(friends[index].birthday!) <= 30) {
-                            return FriendListItem(friend: friends[index]);
-                          } else {
-                            isDividerAdded = true;
-                            return Stack(
-                              children: [
-                                Divider(
-                                  height: 60,
-                                  indent: 32,
-                                  endIndent: 32,
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                                    margin: EdgeInsets.symmetric(vertical: 12.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                      ),
-                                      borderRadius: BorderRadius.circular(24.0),
-                                    ),
-                                    child: Text(
-                                      'Birthday in more than 30 days',
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Column(
+                  child: friends.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("You haven't added any friends yet."),
+                              TextButton(
+                                onPressed: () => print("import friends"), // TODO actually import friends viaService (logic allread implemented in addFriend)
+                                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SizedBox(height: 60),
-                                    FriendListItem(friend: friends[index]),
+                                    Icon(Icons.import_contacts),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Import from Contacts',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
                                   ],
                                 ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
-              ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: friends.length,
+                          itemBuilder: (context, index) {
+                            if (friends[index].birthday == null && !isDividerAddedSecond) {
+                              isDividerAddedSecond = true;
+                              return Stack(
+                                children: [
+                                  Divider(
+                                    height: 60,
+                                    indent: 32,
+                                    endIndent: 32,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                      margin: EdgeInsets.symmetric(vertical: 12.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.circular(24.0),
+                                      ),
+                                      child: Text(
+                                        'Birthday Not Added',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 60),
+                                      FriendListItem(friend: friends[index]),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else if (friends[index].birthday != null &&
+                                !isDividerAddedFirst &&
+                                friendsService.getDaysUntilBirthday(friends[index].birthday!) > 30) {
+                              isDividerAddedFirst = true;
+                              return Stack(
+                                children: [
+                                  Divider(
+                                    height: 60,
+                                    indent: 32,
+                                    endIndent: 32,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                      margin: EdgeInsets.symmetric(vertical: 12.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                        ),
+                                        borderRadius: BorderRadius.circular(24.0),
+                                      ),
+                                      child: Text(
+                                        'Birthday in more than 30 days',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 60),
+                                      FriendListItem(friend: friends[index]),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return FriendListItem(friend: friends[index]);
+                            }
+                          },
+                        )),
             ],
           ),
         ),
