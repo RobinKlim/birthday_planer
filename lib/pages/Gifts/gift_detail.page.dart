@@ -1,4 +1,4 @@
-import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 
 class GiftDetailPage extends StatefulWidget {
-  final Gift gift;
+  final GiftIdea gift;
 
   GiftDetailPage({required this.gift});
 
@@ -29,7 +29,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     _giftDescriptionController = TextEditingController(text: widget.gift.description);
     _giftUrlController = TextEditingController(text: widget.gift.url);
     _giftPriceInEurosController = TextEditingController(text: widget.gift.priceInEuro != null ? widget.gift.priceInEuro.toString() : '');
-    initAssignedFriends();
+    // initAssignedFriends();
   }
 
   @override
@@ -41,21 +41,21 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     super.dispose();
   }
 
-  void initAssignedFriends() async {
-    final database = context.read<Database>();
-    if (widget.gift.assignedFriendIds.isNotEmpty) {
-      List<Friend> friendsToBeAssigned = [];
-      for (final friendId in widget.gift.assignedFriendIds) {
-        final Friend? friend = await database.getFriendById(friendId);
-        if (friend != null) {
-          friendsToBeAssigned.add(friend);
-        }
-      }
-      setState(() {
-        assignedFriends = friendsToBeAssigned;
-      });
-    }
-  }
+  // void initAssignedFriends() async {
+  //   final database = context.read<Database>();
+  //   if (widget.gift.assignedFriendIds.isNotEmpty) {
+  //     List<Friend> friendsToBeAssigned = [];
+  //     for (final friendId in widget.gift.assignedFriendIds) {
+  //       final Friend? friend = await database.getFriendById(friendId);
+  //       if (friend != null) {
+  //         friendsToBeAssigned.add(friend);
+  //       }
+  //     }
+  //     setState(() {
+  //       assignedFriends = friendsToBeAssigned;
+  //     });
+  //   }
+  // }
 
   void _openSelectFriendsPage(BuildContext context) async {
     List<Friend> updatedFriends = [];
@@ -80,10 +80,9 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.gift.description = _giftDescriptionController?.text;
     widget.gift.url = _giftUrlController?.text;
     widget.gift.priceInEuro = parseGiftPrice();
-    widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
+    // widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
 
-    final Gift? updatedGift = await context.read<Database>().updateGift(widget.gift);
-    print(updatedGift?.assignedFriendIds);
+    final GiftIdea? updatedGift = await context.read<Database>().updateGiftIdea(widget.gift);
     if (!mounted) return;
 
     if (updatedGift != null) {
@@ -111,8 +110,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   }
 
   void _deleteGift() async {
-    Gift gift = widget.gift;
-    final bool isGiftDeleted = await context.read<Database>().deleteGift(gift.id);
+    GiftIdea gift = widget.gift;
+    final bool isGiftDeleted = await context.read<Database>().deleteGiftIdea(gift.id);
 
     if (!mounted) return;
 

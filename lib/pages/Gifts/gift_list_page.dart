@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
-import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'add_gift_page.dart';
 import 'package:birthday_planer/widgets/gift_list_item.dart';
 
@@ -14,12 +14,12 @@ class _GiftListPageState extends State<GiftListPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    context.watch<Database>().getAllGifts();
+    context.watch<Database>().getAllGiftIdeas();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Gift> gifts = context.watch<Database>().currentGifts;
+    List<GiftIdea> gifts = context.watch<Database>().currentGiftIdeas;
 
     return Scaffold(
       appBar: AppBar(

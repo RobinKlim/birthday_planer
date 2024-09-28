@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
-import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +16,7 @@ class AddFriendPage extends StatefulWidget {
 class _AddFriendPageState extends State<AddFriendPage> {
   TextEditingController _friendBirthdayDateController = TextEditingController();
   TextEditingController _friendNameController = TextEditingController();
-  List<Gift> assignedGifts = [];
+  List<GiftIdea> assignedGiftIdeas = [];
 
   void _addFriend(Friend friend) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -62,25 +62,25 @@ class _AddFriendPageState extends State<AddFriendPage> {
     navigator.pop(context);
   }
 
-  void removeGift(Gift gift) {
+  void removeGift(GiftIdea gift) {
     setState(() {
-      assignedGifts.remove(gift);
+      assignedGiftIdeas.remove(gift);
     });
   }
 
   void _openSelectGiftsPage(BuildContext context) async {
-    final List<Gift> updatedGifts = await Navigator.push(
+    final List<GiftIdea> updatedGifts = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FriendSelectGiftsPage(
-          assignedGifts: assignedGifts,
+          assignedGifts: assignedGiftIdeas,
         ),
       ),
     );
 
     if (updatedGifts.isNotEmpty) {
       setState(() {
-        assignedGifts = updatedGifts;
+        assignedGiftIdeas = updatedGifts;
       });
     }
   }
@@ -188,7 +188,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                     Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 8.0,
-                      children: assignedGifts.map((gift) {
+                      children: assignedGiftIdeas.map((gift) {
                         return Chip(
                           label: Text(gift.name),
                           onDeleted: () {

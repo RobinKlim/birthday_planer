@@ -1,3 +1,4 @@
+import 'package:birthday_planer/models/gift.dart';
 import 'package:isar/isar.dart';
 
 // this file is needed to generate file
@@ -7,9 +8,13 @@ part 'friend.g.dart';
 @collection
 class Friend {
   Id id = Isar.autoIncrement;
-  String name;
-  DateTime? birthday;
-  List<Id> assignedGiftIds;
 
-  Friend({required this.name, this.birthday, this.assignedGiftIds = const []});
+  String name;
+
+  DateTime? birthday;
+
+  @Backlink(to: 'owner')
+  final gifts = IsarLinks<Gift>();
+
+  Friend({required this.name, this.birthday});
 }

@@ -1,3 +1,4 @@
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
@@ -18,11 +19,15 @@ class Database extends ChangeNotifier {
   Future<void> initialize() async {
     final dir = await getApplicationDocumentsDirectory();
     isar = await Isar.open(
-      [FriendSchema, GiftSchema],
+      [FriendSchema, GiftSchema, GiftIdeaSchema],
       directory: dir.path,
     );
   }
 
+  // F R I E N D - C A L L S
+  // F R I E N D - C A L L S
+  // F R I E N D - C A L L S
+  // F R I E N D - C A L L S
   // F R I E N D - C A L L S
 
   // list of friends
@@ -145,9 +150,65 @@ class Database extends ChangeNotifier {
     return isFriendDeleted;
   }
 
+  // G I F T I D E A - C A L L S
+  // G I F T I D E A - C A L L S
+  // G I F T I D E A - C A L L S
+  // G I F T I D E A - C A L L S
+  // G I F T I D E A - C A L L S
+
+  // list of giftIdeas
+  final List<GiftIdea> currentGiftIdeas = [];
+
+  // C R E A T E
+  Future<void> addGifIdea(GiftIdea newGiftIdea) async {
+    // TODO: check for dublicates
+    // save to db
+    await isar.writeTxn(() => isar.giftIdeas.put(newGiftIdea));
+    // re-read from db
+    await getAllGiftIdeas();
+  }
+
+  // R E A D
+  Future<void> getAllGiftIdeas() async {
+    List<GiftIdea> fetchedGifts = await isar.giftIdeas.where().findAll();
+    currentGiftIdeas.clear();
+    currentGiftIdeas.addAll(fetchedGifts);
+    notifyListeners();
+  }
+
+  Future<GiftIdea?> getGiftIdeaById(int id) async {
+    return await isar.giftIdeas.get(id);
+  }
+
+  // U P D A T E
+  Future<GiftIdea?> updateGiftIdea(GiftIdea giftIdea) async {
+    final giftDB = await isar.gifts.get(giftIdea.id);
+
+    if (giftDB != null) {
+      await isar.writeTxn(() => isar.giftIdeas.put(giftIdea));
+      final updatedGift = await isar.giftIdeas.get(giftIdea.id);
+      await getAllGiftIdeas();
+      return updatedGift;
+    }
+    return null;
+  }
+
+  // D E L E T E
+  Future<bool> deleteGiftIdea(Id giftIdeaId) async {
+    // save to db
+    final isGiftDeleted = await isar.writeTxn(() => isar.gifts.delete(giftIdeaId));
+    // re-read from db
+    await getAllGiftIdeas();
+    return isGiftDeleted;
+  }
+
+  // G I F T - C A L L S
+  // G I F T - C A L L S
+  // G I F T - C A L L S
+  // G I F T - C A L L S
   // G I F T - C A L L S
 
-  // list of friends
+  // list of giftIdeas
   final List<Gift> currentGifts = [];
 
   // C R E A T E
@@ -159,31 +220,6 @@ class Database extends ChangeNotifier {
     await getAllFriends();
   }
 
-  // R E A D
-  Future<void> getAllGifts() async {
-    List<Gift> fetchedGifts = await isar.gifts.where().findAll();
-    currentGifts.clear();
-    currentGifts.addAll(fetchedGifts);
-    notifyListeners();
-  }
-
-  Future<Gift?> getGiftById(int id) async {
-    return await isar.gifts.get(id);
-  }
-
-  // U P D A T E
-  Future<Gift?> updateGift(Gift gift) async {
-    final giftDB = await isar.gifts.get(gift.id);
-
-    if (giftDB != null) {
-      await isar.writeTxn(() => isar.gifts.put(gift));
-      final updatedGift = await isar.gifts.get(gift.id);
-      await getAllGifts();
-      return updatedGift;
-    }
-    return null;
-  }
-
   // D E L E T E
   Future<bool> deleteGift(Id giftId) async {
     // save to db
@@ -191,5 +227,12 @@ class Database extends ChangeNotifier {
     // re-read from db
     await getAllGifts();
     return isGiftDeleted;
+  }
+
+  Future<void> getAllGifts() async {
+    List<Gift> fetchedGifts = await isar.gifts.where().findAll();
+    currentGifts.clear();
+    currentGifts.addAll(fetchedGifts);
+    notifyListeners();
   }
 }

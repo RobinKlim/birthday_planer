@@ -43,7 +43,7 @@ class FriendListItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: ListTile(
-            title: Text(friend.birthday != null ? '${friend.name} (${friendsService.getCurrentAge(friend.birthday!)})' : '${friend.name} (Add Birthday)'),
+            title: Text(friend.birthday != null ? '${friend.name} (${friendsService.getCurrentAge(friend.birthday!)})' : friend.name),
             subtitle: friend.birthday != null ? Text(DateFormat.yMMMMd().format(friend.birthday!)) : Text('Birthday not added'),
             trailing: Icon(Icons.navigate_next),
             onTap: () {

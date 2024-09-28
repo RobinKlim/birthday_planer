@@ -1,9 +1,9 @@
 import 'package:birthday_planer/pages/Gifts/gift_detail.page.dart';
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/gift_idea.dart';
 
 class GiftListItem extends StatelessWidget {
-  final Gift gift;
+  final GiftIdea gift;
 
   GiftListItem({required this.gift});
 

@@ -1,3 +1,4 @@
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
@@ -17,7 +18,7 @@ class FriendDetailPage extends StatefulWidget {
 class _FriendDetailPageState extends State<FriendDetailPage> {
   late TextEditingController _friendNameController;
   late TextEditingController _friendDateController;
-  List<Gift> assignedGifts = [];
+  // List<Gift> assignedGifts = [];
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     } else {
       _friendDateController = TextEditingController(text: "birthday not added yet");
     }
-    initAssignedGifts();
+    // initAssignedGifts();
   }
 
   @override
@@ -40,51 +41,42 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     super.dispose();
   }
 
-  void _openSelectGiftsPage(BuildContext context) async {
-    final List<Gift> updatedGifts = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FriendSelectGiftsPage(
-          assignedGifts: assignedGifts,
-        ),
-      ),
-    );
+  // void _openSelectGiftsPage(BuildContext context) async {
+  //   final List<GiftIdea> updatedGifts = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => FriendSelectGiftsPage(
+  //         assignedGifts: assignedGifts,
+  //       ),
+  //     ),
+  //   );
 
-    if (updatedGifts.isNotEmpty) {
-      setState(() {
-        assignedGifts = updatedGifts;
-      });
-    }
-  }
+  //   if (updatedGifts.isNotEmpty) {
+  //     setState(() {
+  //       assignedGifts = updatedGifts;
+  //     });
+  //   }
+  // }
 
-  void removeGift(Gift gift) {
-    setState(() {
-      assignedGifts.remove(gift);
-    });
-  }
-
-  void initAssignedGifts() async {
+  void removeGift(Gift gift) async {
     final database = context.read<Database>();
-    if (widget.friend.assignedGiftIds.isNotEmpty) {
-      List<Gift> giftsToBeAssigned = [];
-      for (final giftid in widget.friend.assignedGiftIds) {
-        final Gift? gift = await database.getGiftById(giftid);
-        if (gift != null) {
-          giftsToBeAssigned.add(gift);
-        }
-      }
-      setState(() {
-        assignedGifts = giftsToBeAssigned;
-      });
-    }
+    await database.deleteGift(gift.id);
   }
+
+  // void initAssignedGifts() async {
+  //   final database = context.read<Database>();
+  //   List<Gift> giftsToBeAssigned = await database.getGiftsByFriendId(widget.friend.id);
+  //   setState(() {
+  //     assignedGifts = giftsToBeAssigned;
+  //   });
+  // }
 
   void _updateFriend() async {
     DateTime updatedBirthday = DateTime.parse(_friendDateController.text);
 
     widget.friend.name = _friendNameController.text;
     widget.friend.birthday = updatedBirthday;
-    widget.friend.assignedGiftIds = assignedGifts.map((gift) => gift.id).toList();
+    // widget.friend.assignedGiftIds = assignedGifts.map((gift) => gift.id).toList();
 
     final Friend? updatedFriend = await context.read<Database>().updateFriend(widget.friend);
 
@@ -217,27 +209,27 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
                     Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 8.0,
-                      children: assignedGifts.map((gift) {
+                      children: widget.friend.gifts.map((gift) {
                         return Chip(
-                          label: Text(gift.name),
+                          label: Text(gift.giftIdea.value!.name), // TODO: NULLCHECK
                           onDeleted: () {
                             removeGift(gift);
                           },
                         );
                       }).toList(),
                     ),
-                    TextButton(
-                      onPressed: () => _openSelectGiftsPage(context),
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.card_giftcard),
-                          SizedBox(width: 8),
-                          Text('Select Gifts for ${widget.friend.name}'),
-                        ],
-                      ),
-                    ),
+                    // TextButton(
+                    //   onPressed: () => _openSelectGiftsPage(context),
+                    //   style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     children: [
+                    //       Icon(Icons.card_giftcard),
+                    //       SizedBox(width: 8),
+                    //       Text('Select Gifts for ${widget.friend.name}'),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

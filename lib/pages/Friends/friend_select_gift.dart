@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 
 class FriendSelectGiftsPage extends StatefulWidget {
-  final List<Gift> assignedGifts;
+  final List<GiftIdea> assignedGifts;
 
   FriendSelectGiftsPage({required this.assignedGifts});
 
@@ -13,16 +13,16 @@ class FriendSelectGiftsPage extends StatefulWidget {
 }
 
 class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
-  late List<Gift> selectedGifts;
+  late List<GiftIdea> selectedGifts;
 
   @override
   void initState() {
     super.initState();
-    context.read<Database>().getAllGifts();
+    context.read<Database>().getAllGiftIdeas();
     selectedGifts = List.from(widget.assignedGifts);
   }
 
-  void toggleGiftSelection(Gift gift) {
+  void toggleGiftSelection(GiftIdea gift) {
     setState(() {
       if (selectedGifts.any((selectedGift) => selectedGift.id == gift.id)) {
         selectedGifts.removeWhere((selectedGift) => selectedGift.id == gift.id);
@@ -34,7 +34,7 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Gift> gifts = context.watch<Database>().currentGifts;
+    List<GiftIdea> gifts = context.watch<Database>().currentGiftIdeas;
 
     return Scaffold(
       appBar: AppBar(
