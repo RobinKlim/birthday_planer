@@ -80,7 +80,6 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.giftIdea.description = _giftDescriptionController?.text;
     widget.giftIdea.url = _giftUrlController?.text;
     widget.giftIdea.priceInEuro = parseGiftPrice();
-    // widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
 
     final GiftIdea? updatedGift = await context.read<Database>().updateGiftIdea(widget.giftIdea);
     if (!mounted) return;

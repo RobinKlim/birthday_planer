@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
@@ -30,7 +32,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     } else {
       _friendDateController = TextEditingController(text: "birthday not added yet");
     }
-    // initAssignedGifts();
+    initAssignedGifts();
   }
 
   @override
@@ -45,39 +47,50 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
       context,
       MaterialPageRoute(
         builder: (context) => FriendSelectGiftsPage(
-          friendGifts: widget.friend.gifts.toList(),
+          friendGifts: assignedGifts,
         ),
       ),
     );
-
-    if (updatedGifts.isNotEmpty) {
-      setState(() {
-        widget.friend.gifts.addAll(updatedGifts);
-      });
-    }
+    setState(() {
+      assignedGifts = updatedGifts;
+    });
   }
 
   void removeGift(Gift gift) async {
     setState(() {
-      widget.friend.gifts.remove(gift);
+      assignedGifts.remove(gift);
     });
   }
 
   void initAssignedGifts() async {
-    assignedGifts = widget.friend.gifts.toList();
+    List<Gift> gifts = [];
+    for (var gift in widget.friend.gifts) {
+      await gift.giftIdea.load();
+      Gift newGift = Gift(isBought: gift.isBought);
+
+      if (gift.giftIdea.value != null) {
+        newGift.giftIdea.value = gift.giftIdea.value;
+      }
+      gifts.add(newGift);
+    }
+    setState(() {
+      assignedGifts = gifts;
+    });
   }
 
   void _updateFriend() async {
-    DateTime? updatedBirthday = _friendDateController.text.isNotEmpty ? DateTime.parse(_friendDateController.text) : null;
+    DateTime? updatedBirthday;
+    if (_friendDateController.text.isNotEmpty) {
+      updatedBirthday = DateTime.parse(_friendDateController.text);
+    } else {
+      updatedBirthday = null;
+    }
 
     widget.friend.name = _friendNameController.text;
     widget.friend.birthday = updatedBirthday;
 
-    // for (var gift in widget.friend.gifts) {
-    //   print(gift.giftIdea.value?.name);
-    // }
-
-    widget.friend.gifts.addAll(assignedGifts); // TODO Check if Gift allready exists
+    widget.friend.gifts.clear();
+    widget.friend.gifts.addAll(assignedGifts);
 
     final Friend? updatedFriend = await context.read<Database>().updateFriend(widget.friend);
 
@@ -210,7 +223,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
                     Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 8.0,
-                      children: widget.friend.gifts.map((gift) {
+                      children: assignedGifts.map((gift) {
                         return Chip(
                           label: Text(gift.giftIdea.value!.name), // TODO: NULLCHECK
                           onDeleted: () {

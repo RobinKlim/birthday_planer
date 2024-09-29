@@ -18,7 +18,6 @@ dependencies:
   path_provider: ^2.0.11
   isar: ^3.1.0
   isar_flutter_libs: ^3.1.0
-  isar_inspector: 
   contacts_service: ^0.6.3
   permission_handler: ^11.3.1
 

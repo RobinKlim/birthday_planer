@@ -131,17 +131,14 @@ class Database extends ChangeNotifier {
   // U P D A T E
   // TODO: return updatedFriend
   Future<Friend?> updateFriend(Friend friend) async {
-    final friendDB = await isar.friends.get(friend.id);
+    await deleteFriend(friend.id);
 
-    if (friendDB != null) {
-      isar.writeTxnSync(() {
-        isar.friends.putSync(friend);
-      });
-      final updatedFriend = await isar.friends.get(friend.id);
-      await getAllFriends();
-      return updatedFriend;
-    }
-    return null;
+    isar.writeTxnSync(() {
+      isar.friends.putSync(friend);
+    });
+    final Friend? updatedFriend = await isar.friends.get(friend.id);
+    await getAllFriends();
+    return updatedFriend;
   }
 
   // D E L E T E

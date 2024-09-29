@@ -12,7 +12,7 @@ class Gift {
 
   bool isBought;
 
-  final giftIdea = IsarLink<GiftIdea>();
+  var giftIdea = IsarLink<GiftIdea>();
 
   final owner = IsarLink<Friend>();
 
