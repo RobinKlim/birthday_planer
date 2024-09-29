@@ -1,4 +1,3 @@
-import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
@@ -18,7 +17,7 @@ class FriendDetailPage extends StatefulWidget {
 class _FriendDetailPageState extends State<FriendDetailPage> {
   late TextEditingController _friendNameController;
   late TextEditingController _friendDateController;
-  // List<Gift> assignedGifts = [];
+  List<Gift> assignedGifts = [];
 
   @override
   void initState() {
@@ -41,42 +40,44 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
     super.dispose();
   }
 
-  // void _openSelectGiftsPage(BuildContext context) async {
-  //   final List<GiftIdea> updatedGifts = await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => FriendSelectGiftsPage(
-  //         assignedGifts: assignedGifts,
-  //       ),
-  //     ),
-  //   );
+  void _openSelectGiftsPage(BuildContext context) async {
+    final List<Gift> updatedGifts = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendSelectGiftsPage(
+          friendGifts: widget.friend.gifts.toList(),
+        ),
+      ),
+    );
 
-  //   if (updatedGifts.isNotEmpty) {
-  //     setState(() {
-  //       assignedGifts = updatedGifts;
-  //     });
-  //   }
-  // }
-
-  void removeGift(Gift gift) async {
-    final database = context.read<Database>();
-    await database.deleteGift(gift.id);
+    if (updatedGifts.isNotEmpty) {
+      setState(() {
+        widget.friend.gifts.addAll(updatedGifts);
+      });
+    }
   }
 
-  // void initAssignedGifts() async {
-  //   final database = context.read<Database>();
-  //   List<Gift> giftsToBeAssigned = await database.getGiftsByFriendId(widget.friend.id);
-  //   setState(() {
-  //     assignedGifts = giftsToBeAssigned;
-  //   });
-  // }
+  void removeGift(Gift gift) async {
+    setState(() {
+      widget.friend.gifts.remove(gift);
+    });
+  }
+
+  void initAssignedGifts() async {
+    assignedGifts = widget.friend.gifts.toList();
+  }
 
   void _updateFriend() async {
-    DateTime updatedBirthday = DateTime.parse(_friendDateController.text);
+    DateTime? updatedBirthday = _friendDateController.text.isNotEmpty ? DateTime.parse(_friendDateController.text) : null;
 
     widget.friend.name = _friendNameController.text;
     widget.friend.birthday = updatedBirthday;
-    // widget.friend.assignedGiftIds = assignedGifts.map((gift) => gift.id).toList();
+
+    // for (var gift in widget.friend.gifts) {
+    //   print(gift.giftIdea.value?.name);
+    // }
+
+    widget.friend.gifts.addAll(assignedGifts); // TODO Check if Gift allready exists
 
     final Friend? updatedFriend = await context.read<Database>().updateFriend(widget.friend);
 
@@ -218,18 +219,18 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
                         );
                       }).toList(),
                     ),
-                    // TextButton(
-                    //   onPressed: () => _openSelectGiftsPage(context),
-                    //   style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                    //   child: Row(
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: [
-                    //       Icon(Icons.card_giftcard),
-                    //       SizedBox(width: 8),
-                    //       Text('Select Gifts for ${widget.friend.name}'),
-                    //     ],
-                    //   ),
-                    // ),
+                    TextButton(
+                      onPressed: () => _openSelectGiftsPage(context),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.card_giftcard),
+                          SizedBox(width: 8),
+                          Text('Select Gifts for ${widget.friend.name}'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -37,9 +37,10 @@ class Database extends ChangeNotifier {
   Future<bool> addFriend(Friend newFriend) async {
     final Set<String> existingFriendNames = currentFriends.map((friend) => friend.name).toSet();
     if (!existingFriendNames.contains(newFriend.name)) {
-      // save to db
-      await isar.writeTxn(() => isar.friends.put(newFriend));
-      // re-read from db
+      isar.writeTxnSync(() {
+        isar.friends.putSync(newFriend);
+      });
+
       await getAllFriends();
       return true;
     } else {
@@ -133,7 +134,9 @@ class Database extends ChangeNotifier {
     final friendDB = await isar.friends.get(friend.id);
 
     if (friendDB != null) {
-      await isar.writeTxn(() => isar.friends.put(friend));
+      isar.writeTxnSync(() {
+        isar.friends.putSync(friend);
+      });
       final updatedFriend = await isar.friends.get(friend.id);
       await getAllFriends();
       return updatedFriend;
@@ -144,6 +147,7 @@ class Database extends ChangeNotifier {
   // D E L E T E
   Future<bool> deleteFriend(Id friendId) async {
     // save to db
+    await isar.writeTxn(() => isar.gifts.filter().owner((owner) => owner.idEqualTo(friendId)).deleteAll());
     final isFriendDeleted = await isar.writeTxn(() => isar.friends.delete(friendId));
     // re-read from db
     await getAllFriends();
@@ -160,12 +164,17 @@ class Database extends ChangeNotifier {
   final List<GiftIdea> currentGiftIdeas = [];
 
   // C R E A T E
-  Future<void> addGifIdea(GiftIdea newGiftIdea) async {
-    // TODO: check for dublicates
-    // save to db
-    await isar.writeTxn(() => isar.giftIdeas.put(newGiftIdea));
-    // re-read from db
-    await getAllGiftIdeas();
+  Future<bool> addGifIdea(GiftIdea newGiftIdea) async {
+    final Set<String> existingGiftIdeas = currentGiftIdeas.map((giftIdea) => giftIdea.name).toSet();
+    if (!existingGiftIdeas.contains(newGiftIdea.name)) {
+      isar.writeTxnSync(() {
+        isar.giftIdeas.putSync(newGiftIdea);
+      });
+      await getAllGiftIdeas();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // R E A D
@@ -196,7 +205,8 @@ class Database extends ChangeNotifier {
   // D E L E T E
   Future<bool> deleteGiftIdea(Id giftIdeaId) async {
     // save to db
-    final isGiftDeleted = await isar.writeTxn(() => isar.gifts.delete(giftIdeaId));
+    await isar.writeTxn(() => isar.gifts.filter().giftIdea((giftIdea) => giftIdea.idEqualTo(giftIdeaId)).deleteAll());
+    final isGiftDeleted = await isar.writeTxn(() => isar.giftIdeas.delete(giftIdeaId));
     // re-read from db
     await getAllGiftIdeas();
     return isGiftDeleted;
@@ -215,9 +225,11 @@ class Database extends ChangeNotifier {
   Future<void> addGift(Gift newGift) async {
     // TODO: check for dublicates
     // save to db
-    await isar.writeTxn(() => isar.gifts.put(newGift));
+    isar.writeTxnSync(() {
+      isar.gifts.putSync(newGift);
+    });
     // re-read from db
-    await getAllFriends();
+    await getAllGifts();
   }
 
   // D E L E T E

@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:birthday_planer/pages/Gifts/gift_select_friends_page.dart';
 
 class GiftDetailPage extends StatefulWidget {
-  final GiftIdea gift;
+  final GiftIdea giftIdea;
 
-  GiftDetailPage({required this.gift});
+  GiftDetailPage({required this.giftIdea});
 
   @override
   State<GiftDetailPage> createState() => _GiftDetailPageState();
@@ -25,10 +25,10 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   @override
   void initState() {
     super.initState();
-    _giftNameController = TextEditingController(text: widget.gift.name);
-    _giftDescriptionController = TextEditingController(text: widget.gift.description);
-    _giftUrlController = TextEditingController(text: widget.gift.url);
-    _giftPriceInEurosController = TextEditingController(text: widget.gift.priceInEuro != null ? widget.gift.priceInEuro.toString() : '');
+    _giftNameController = TextEditingController(text: widget.giftIdea.name);
+    _giftDescriptionController = TextEditingController(text: widget.giftIdea.description);
+    _giftUrlController = TextEditingController(text: widget.giftIdea.url);
+    _giftPriceInEurosController = TextEditingController(text: widget.giftIdea.priceInEuro != null ? widget.giftIdea.priceInEuro.toString() : '');
     // initAssignedFriends();
   }
 
@@ -76,13 +76,13 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   }
 
   void _updateGift() async {
-    widget.gift.name = _giftNameController.text;
-    widget.gift.description = _giftDescriptionController?.text;
-    widget.gift.url = _giftUrlController?.text;
-    widget.gift.priceInEuro = parseGiftPrice();
+    widget.giftIdea.name = _giftNameController.text;
+    widget.giftIdea.description = _giftDescriptionController?.text;
+    widget.giftIdea.url = _giftUrlController?.text;
+    widget.giftIdea.priceInEuro = parseGiftPrice();
     // widget.gift.assignedFriendIds = assignedFriends.map((friend) => friend.id).toList();
 
-    final GiftIdea? updatedGift = await context.read<Database>().updateGiftIdea(widget.gift);
+    final GiftIdea? updatedGift = await context.read<Database>().updateGiftIdea(widget.giftIdea);
     if (!mounted) return;
 
     if (updatedGift != null) {
@@ -95,7 +95,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${widget.gift.name} not updated'),
+          content: Text('${widget.giftIdea.name} not updated'),
           backgroundColor: Colors.grey,
         ),
       );
@@ -109,8 +109,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     });
   }
 
-  void _deleteGift() async {
-    GiftIdea gift = widget.gift;
+  void _deleteGiftIdea() async {
+    GiftIdea gift = widget.giftIdea;
     final bool isGiftDeleted = await context.read<Database>().deleteGiftIdea(gift.id);
 
     if (!mounted) return;
@@ -147,7 +147,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.gift.name),
+        title: Text(widget.giftIdea.name),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: <Widget>[
@@ -171,7 +171,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                       ElevatedButton(
                         child: Text('Delete'),
                         onPressed: () {
-                          _deleteGift();
+                          _deleteGiftIdea();
                           Navigator.of(context).pop();
                         },
                       ),

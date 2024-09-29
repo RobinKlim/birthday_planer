@@ -1,3 +1,5 @@
+import 'package:birthday_planer/models/gift.dart';
+import 'package:birthday_planer/pages/Gifts/gift_detail.page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
@@ -40,11 +42,16 @@ class _AddGiftPageState extends State<AddGiftPage> {
     final String? giftLink = _giftUrlController.text.isNotEmpty ? _giftUrlController.text : null;
     final String? giftPrice = _giftPriceInEurosController.text.isNotEmpty ? _giftPriceInEurosController.text : null;
     final int? giftPriceParsed = (giftPrice != null) ? int.tryParse(giftPrice) : null;
-    // final List<int> assignedFriendsId = assignedFriends.map((friend) => friend.id).toList();
+
+    List<Gift> gifts = [];
+    for (var friend in assignedFriends) {
+      Gift newGift = Gift()..owner.value = friend;
+      gifts.add(newGift);
+    }
 
     if (giftName.isNotEmpty) {
-      // final newGift = GiftIdea(name: giftName, description: giftDescription, url: giftLink, priceInEuro: giftPriceParsed, assignedFriendIds: assignedFriendsId);
       final newGift = GiftIdea(name: giftName, description: giftDescription, url: giftLink, priceInEuro: giftPriceParsed);
+      newGift.gifts.addAll(gifts);
       context.read<Database>().addGifIdea(newGift);
 
       ScaffoldMessenger.of(context).showSnackBar(

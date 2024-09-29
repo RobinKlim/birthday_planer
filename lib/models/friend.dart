@@ -14,7 +14,7 @@ class Friend {
   DateTime? birthday;
 
   @Backlink(to: 'owner')
-  final gifts = IsarLinks<Gift>();
+  var gifts = IsarLinks<Gift>();
 
   Friend({required this.name, this.birthday});
 }

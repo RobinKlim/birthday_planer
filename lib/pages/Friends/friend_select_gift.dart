@@ -1,12 +1,13 @@
+import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 
 class FriendSelectGiftsPage extends StatefulWidget {
-  final List<GiftIdea> assignedGifts;
+  final List<Gift> friendGifts;
 
-  FriendSelectGiftsPage({required this.assignedGifts});
+  FriendSelectGiftsPage({required this.friendGifts});
 
   @override
   State<FriendSelectGiftsPage> createState() => _FriendSelectGiftsPageState();
@@ -19,7 +20,7 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
   void initState() {
     super.initState();
     context.read<Database>().getAllGiftIdeas();
-    selectedGifts = List.from(widget.assignedGifts);
+    selectedGifts = widget.friendGifts.map((gift) => gift.giftIdea.value).cast<GiftIdea>().toList();
   }
 
   void toggleGiftSelection(GiftIdea gift) {
@@ -32,9 +33,18 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
     });
   }
 
+  void _backToFriendDetailPage(BuildContext context) {
+    List<Gift> gifts = [];
+    for (var giftIdea in selectedGifts) {
+      final Gift newGift = Gift()..giftIdea.value = giftIdea;
+      gifts.add(newGift);
+    }
+    Navigator.pop(context, gifts);
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<GiftIdea> gifts = context.watch<Database>().currentGiftIdeas;
+    List<GiftIdea> giftIdeas = context.watch<Database>().currentGiftIdeas;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +54,7 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, selectedGifts);
+            _backToFriendDetailPage(context);
           },
         ),
       ),
@@ -69,7 +79,7 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
           ),
           Expanded(
             child: ListView(
-              children: gifts.map((gift) {
+              children: giftIdeas.map((gift) {
                 return CheckboxListTile(
                   title: Text(gift.name),
                   value: selectedGifts.any((selectedGift) => selectedGift.id == gift.id),
@@ -84,7 +94,7 @@ class _FriendSelectGiftsPageState extends State<FriendSelectGiftsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, selectedGifts);
+          _backToFriendDetailPage(context);
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

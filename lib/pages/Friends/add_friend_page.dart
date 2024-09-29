@@ -1,6 +1,6 @@
+import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
-import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -16,13 +16,21 @@ class AddFriendPage extends StatefulWidget {
 class _AddFriendPageState extends State<AddFriendPage> {
   TextEditingController _friendBirthdayDateController = TextEditingController();
   TextEditingController _friendNameController = TextEditingController();
-  List<GiftIdea> assignedGiftIdeas = [];
+  List<Gift> assignedGifts = [];
 
-  void _addFriend(Friend friend) async {
+  void _addFriend() async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
-    bool friendAdded = await context.read<Database>().addFriend(friend);
+    final String friendName = _friendNameController.text;
+    final DateTime? friendBirthday = _friendBirthdayDateController.text != '' ? DateFormat('yyyy-MM-dd').parse(_friendBirthdayDateController.text) : null;
+    final List<Gift> friendGifts = assignedGifts;
+
+    Friend newFriend = Friend(name: friendName, birthday: friendBirthday);
+    newFriend.gifts.addAll(friendGifts);
+
+    bool friendAdded = await context.read<Database>().addFriend(newFriend);
+
     if (!mounted) return;
 
     if (friendAdded) {
@@ -40,6 +48,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
         ),
       );
     }
+    if (!mounted) return;
     navigator.pop(context);
   }
 
@@ -62,27 +71,24 @@ class _AddFriendPageState extends State<AddFriendPage> {
     navigator.pop(context);
   }
 
-  void removeGift(GiftIdea gift) {
+  void removeGift(Gift gift) {
     setState(() {
-      assignedGiftIdeas.remove(gift);
+      assignedGifts.remove(gift);
     });
   }
 
   void _openSelectGiftsPage(BuildContext context) async {
-    final List<GiftIdea> updatedGifts = await Navigator.push(
+    final List<Gift> updatedGifts = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FriendSelectGiftsPage(
-          assignedGifts: assignedGiftIdeas,
+          friendGifts: assignedGifts,
         ),
       ),
     );
-
-    if (updatedGifts.isNotEmpty) {
-      setState(() {
-        assignedGiftIdeas = updatedGifts;
-      });
-    }
+    setState(() {
+      assignedGifts = updatedGifts;
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -188,9 +194,9 @@ class _AddFriendPageState extends State<AddFriendPage> {
                     Wrap(
                       alignment: WrapAlignment.start,
                       spacing: 8.0,
-                      children: assignedGiftIdeas.map((gift) {
+                      children: assignedGifts.map((gift) {
                         return Chip(
-                          label: Text(gift.name),
+                          label: Text(gift.giftIdea.value!.name), // TODO proper Null Check
                           onDeleted: () {
                             removeGift(gift);
                           },
@@ -216,11 +222,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                if (_friendBirthdayDateController.text != '') {
-                  _addFriend(Friend(name: _friendNameController.text, birthday: DateFormat('yyyy-MM-dd').parse(_friendBirthdayDateController.text)));
-                } else {
-                  _addFriend(Friend(name: _friendNameController.text));
-                }
+                _addFriend();
               },
               child: SizedBox(
                 width: double.infinity,

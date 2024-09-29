@@ -30,7 +30,7 @@ class GiftListItem extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => GiftDetailPage(
-                      gift: gift,
+                      giftIdea: gift,
                     )),
           );
         },
