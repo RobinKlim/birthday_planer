@@ -39,7 +39,7 @@ class _AddGiftPageState extends State<AddGiftPage> {
   void _addGift() async {
     final String giftName = _giftNameController.text;
     final String? giftDescription = _giftDescriptionController.text.isNotEmpty ? _giftDescriptionController.text : null;
-    final String? giftLink = _giftUrlController.text.isNotEmpty ? _giftUrlController.text : null;
+    final String? giftUrl = _giftUrlController.text.isNotEmpty ? _giftUrlController.text : null;
     final String? giftPrice = _giftPriceInEurosController.text.isNotEmpty ? _giftPriceInEurosController.text : null;
     final int? giftPriceParsed = (giftPrice != null) ? int.tryParse(giftPrice) : null;
 
@@ -50,7 +50,7 @@ class _AddGiftPageState extends State<AddGiftPage> {
     }
 
     if (giftName.isNotEmpty) {
-      final newGift = GiftIdea(name: giftName, description: giftDescription, url: giftLink, priceInEuro: giftPriceParsed);
+      final newGift = GiftIdea(name: giftName, description: giftDescription, url: giftUrl, priceInEuro: giftPriceParsed);
       newGift.gifts.addAll(gifts);
       context.read<Database>().addGifIdea(newGift);
 

@@ -1,5 +1,6 @@
 import 'package:birthday_planer/models/gift_idea.dart';
 import 'package:birthday_planer/models/friend.dart';
+import 'package:birthday_planer/models/gift.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
@@ -29,7 +30,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     _giftDescriptionController = TextEditingController(text: widget.giftIdea.description);
     _giftUrlController = TextEditingController(text: widget.giftIdea.url);
     _giftPriceInEurosController = TextEditingController(text: widget.giftIdea.priceInEuro != null ? widget.giftIdea.priceInEuro.toString() : '');
-    // initAssignedFriends();
+    initAssignedFriends();
   }
 
   @override
@@ -41,21 +42,20 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     super.dispose();
   }
 
-  // void initAssignedFriends() async {
-  //   final database = context.read<Database>();
-  //   if (widget.gift.assignedFriendIds.isNotEmpty) {
-  //     List<Friend> friendsToBeAssigned = [];
-  //     for (final friendId in widget.gift.assignedFriendIds) {
-  //       final Friend? friend = await database.getFriendById(friendId);
-  //       if (friend != null) {
-  //         friendsToBeAssigned.add(friend);
-  //       }
-  //     }
-  //     setState(() {
-  //       assignedFriends = friendsToBeAssigned;
-  //     });
-  //   }
-  // }
+  void initAssignedFriends() async {
+    List<Friend> tempFriends = [];
+
+    for (var gift in widget.giftIdea.gifts) {
+      await gift.owner.load();
+      if (gift.owner.value != null) {
+        tempFriends.add(gift.owner.value!);
+      }
+    }
+
+    setState(() {
+      assignedFriends = tempFriends;
+    });
+  }
 
   void _openSelectFriendsPage(BuildContext context) async {
     List<Friend> updatedFriends = [];
@@ -80,6 +80,18 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.giftIdea.description = _giftDescriptionController?.text;
     widget.giftIdea.url = _giftUrlController?.text;
     widget.giftIdea.priceInEuro = parseGiftPrice();
+    // TODO: create gift for each friend (delete giftidea and make new?)
+
+    List<Gift> gifts = [];
+    for (var friend in assignedFriends) {
+      Gift newGift = Gift()..owner.value = friend;
+      gifts.add(newGift);
+    }
+
+    widget.giftIdea.gifts.addAll(gifts);
+    for (var gift in widget.giftIdea.gifts) {
+      print(gift.owner.value?.name);
+    }
 
     final GiftIdea? updatedGift = await context.read<Database>().updateGiftIdea(widget.giftIdea);
     if (!mounted) return;

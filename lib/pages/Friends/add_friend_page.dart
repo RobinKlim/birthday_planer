@@ -143,21 +143,13 @@ class _AddFriendPageState extends State<AddFriendPage> {
         title: Text('Add Friend'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: FloatingActionButton(
-                  onPressed: () {
-                    importContacts(context);
-                  },
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  child: Icon(Icons.import_contacts, color: Theme.of(context).colorScheme.primary),
-                )),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.import_contacts),
+            tooltip: 'Import Contacts',
+            onPressed: () {
+              importContacts(context);
+            },
           ),
         ],
       ),

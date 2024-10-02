@@ -188,15 +188,14 @@ class Database extends ChangeNotifier {
 
   // U P D A T E
   Future<GiftIdea?> updateGiftIdea(GiftIdea giftIdea) async {
-    final giftDB = await isar.gifts.get(giftIdea.id);
+    await deleteGiftIdea(giftIdea.id);
 
-    if (giftDB != null) {
-      await isar.writeTxn(() => isar.giftIdeas.put(giftIdea));
-      final updatedGift = await isar.giftIdeas.get(giftIdea.id);
-      await getAllGiftIdeas();
-      return updatedGift;
-    }
-    return null;
+    isar.writeTxnSync(() {
+      isar.giftIdeas.putSync(giftIdea);
+    });
+    final GiftIdea? updatedGiftIdea = await isar.giftIdeas.get(giftIdea.id);
+    await getAllGiftIdeas();
+    return updatedGiftIdea;
   }
 
   // D E L E T E
