@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:intl/intl.dart';
 import 'package:birthday_planer/services/friends.service.dart';
+import 'package:confetti/confetti.dart';
 
 class FriendListItem extends StatelessWidget {
   final Friend friend;
@@ -12,6 +13,10 @@ class FriendListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final friendsService = FriendsService();
+    final ConfettiController _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
+
     int? birthdayAge;
     int? daysUntilBirthday;
     if (friend.birthday != null) {
@@ -34,6 +39,10 @@ class FriendListItem extends StatelessWidget {
       }
     }
 
+    if (daysUntilBirthday == 0) {
+      _confettiController.play();
+    }
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -54,6 +63,17 @@ class FriendListItem extends StatelessWidget {
             },
           ),
         ),
+        if (daysUntilBirthday == 0)
+          Positioned.fill(
+            child: Center(
+              child: ConfettiWidget(
+                confettiController: _confettiController,
+                blastDirectionality: BlastDirectionality.explosive, // Explode in all directions
+                shouldLoop: false, // Don't loop continuously
+                colors: const [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple],
+              ),
+            ),
+          ),
         if (daysUntilBirthday != null && daysUntilBirthday <= 30)
           Positioned(
             right: 0,
@@ -61,13 +81,13 @@ class FriendListItem extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: daysUntilBirthday == 0 ? Colors.cyan : Colors.green,
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: friend.birthday != null
                   ? Text(
                       daysUntilBirthday == 0
-                          ? '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday is today!'
+                          ? '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday is today! 🎉'
                           : '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday in $daysUntilBirthday days',
                       style: TextStyle(
                         color: Colors.white,

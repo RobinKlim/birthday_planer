@@ -25,6 +25,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
     List<Friend> friends = context.watch<Database>().currentFriends;
     bool isDividerAddedFirst = false;
     bool isDividerAddedSecond = false;
+    bool isDividerAddedThird = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +66,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             children: [
                               Text("You haven't added any friends yet."),
                               TextButton(
-                                onPressed: () => print("import friends"), // TODO actually import friends viaService (logic allread implemented in addFriend)
+                                onPressed: () => print("import friends"), // TODO: implement import friends
                                 style: TextButton.styleFrom(padding: EdgeInsets.zero),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -85,91 +86,78 @@ class _FriendsListPageState extends State<FriendsListPage> {
                       : ListView.builder(
                           itemCount: friends.length,
                           itemBuilder: (context, index) {
-                            if (friends[index].birthday == null && !isDividerAddedSecond) {
+                            final friend = friends[index];
+                            final birthdayDays = friend.birthday != null ? friendsService.getDaysUntilBirthday(friend.birthday!) : null;
+
+                            if (friend.birthday == null && !isDividerAddedSecond) {
                               isDividerAddedSecond = true;
-                              return Stack(
-                                children: [
-                                  Divider(
-                                    height: 60,
-                                    indent: 32,
-                                    endIndent: 32,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                                      margin: EdgeInsets.symmetric(vertical: 12.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        ),
-                                        borderRadius: BorderRadius.circular(24.0),
-                                      ),
-                                      child: Text(
-                                        'Birthday Not Added',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 60),
-                                      FriendListItem(friend: friends[index]),
-                                    ],
-                                  ),
-                                ],
+                              return buildDividerAndTile(
+                                'Birthday Not Added',
+                                friend,
+                                context,
                               );
-                            } else if (friends[index].birthday != null &&
-                                !isDividerAddedFirst &&
-                                friendsService.getDaysUntilBirthday(friends[index].birthday!) > 30) {
-                              isDividerAddedFirst = true;
-                              return Stack(
-                                children: [
-                                  Divider(
-                                    height: 60,
-                                    indent: 32,
-                                    endIndent: 32,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                                      margin: EdgeInsets.symmetric(vertical: 12.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        ),
-                                        borderRadius: BorderRadius.circular(24.0),
-                                      ),
-                                      child: Text(
-                                        'Birthday in more than 30 days',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 60),
-                                      FriendListItem(friend: friends[index]),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return FriendListItem(friend: friends[index]);
+                            } else if (friend.birthday != null && birthdayDays != null) {
+                              if (!isDividerAddedFirst && birthdayDays > 30) {
+                                isDividerAddedFirst = true;
+                                return buildDividerAndTile(
+                                  'Birthday in more than 30 days',
+                                  friend,
+                                  context,
+                                );
+                              } else if (!isDividerAddedThird && birthdayDays <= 30 && birthdayDays != 0) {
+                                isDividerAddedThird = true;
+                                return buildDividerAndTile(
+                                  'Birthday within the next 30 days',
+                                  friend,
+                                  context,
+                                );
+                              }
                             }
+                            return FriendListItem(friend: friend);
                           },
                         )),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildDividerAndTile(String message, Friend friend, BuildContext context) {
+    return Stack(
+      children: [
+        Divider(
+          height: 60,
+          indent: 32,
+          endIndent: 32,
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            margin: EdgeInsets.symmetric(vertical: 12.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Colors.grey,
+              ),
+              borderRadius: BorderRadius.circular(24.0),
+            ),
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+        ),
+        Column(
+          children: [
+            SizedBox(height: 60),
+            FriendListItem(friend: friend),
+          ],
+        ),
+      ],
     );
   }
 }

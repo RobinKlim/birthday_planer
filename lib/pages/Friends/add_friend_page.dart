@@ -130,7 +130,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
           title: Text('Import Contacts'),
           content: Text('Do you want to import all contacts or only those with a birthday?'),
           actions: <Widget>[
-            OutlinedButton(
+            TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _importContactsWithBirthday();
