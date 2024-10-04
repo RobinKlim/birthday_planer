@@ -105,23 +105,9 @@ class _AddFriendPageState extends State<AddFriendPage> {
 
   Future<void> importContacts(BuildContext context) async {
     PermissionStatus permission = await Permission.contacts.request();
-    print("permission: $permission");
-    if (permission.isGranted) {
-      Iterable<Contact> importedContacts = await ContactsService.getContacts();
 
-      List<Friend> friendsList = importedContacts.where((importedContact) => importedContact.displayName != null).map((importedContact) {
-        if (importedContact.birthday == null) {
-          return Friend(
-            name: importedContact.displayName!,
-          );
-        } else {
-          return Friend(
-            name: importedContact.displayName!,
-            birthday: importedContact.birthday,
-          );
-        }
-      }).toList();
-      _addFriends(friendsList);
+    if (permission.isGranted) {
+      await _showImportDialog(context);
     } else {
       if (!context.mounted) return;
 
@@ -132,8 +118,63 @@ class _AddFriendPageState extends State<AddFriendPage> {
         ),
       );
 
-      print("Contacts permission denied"); //TODO ask for permissions again if denied
+      print("Contacts permission denied");
     }
+  }
+
+  Future<void> _showImportDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Import Contacts'),
+          content: Text('Do you want to import all contacts or only those with a birthday?'),
+          actions: <Widget>[
+            OutlinedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _importContactsWithBirthday();
+              },
+              child: Text('With Birthday Only'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _importAllContacts();
+              },
+              child: Text('Import All'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _importAllContacts() async {
+    Iterable<Contact> importedContacts = await ContactsService.getContacts();
+
+    List<Friend> friendsList = importedContacts.where((importedContact) => importedContact.displayName != null).map((importedContact) {
+      return Friend(
+        name: importedContact.displayName!,
+        birthday: importedContact.birthday,
+      );
+    }).toList();
+
+    _addFriends(friendsList);
+  }
+
+  Future<void> _importContactsWithBirthday() async {
+    Iterable<Contact> importedContacts = await ContactsService.getContacts();
+
+    List<Friend> friendsList =
+        importedContacts.where((importedContact) => importedContact.displayName != null && importedContact.birthday != null).map((importedContact) {
+      return Friend(
+        name: importedContact.displayName!,
+        birthday: importedContact.birthday,
+      );
+    }).toList();
+
+    _addFriends(friendsList);
   }
 
   @override

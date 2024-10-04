@@ -80,7 +80,6 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     widget.giftIdea.description = _giftDescriptionController?.text;
     widget.giftIdea.url = _giftUrlController?.text;
     widget.giftIdea.priceInEuro = parseGiftPrice();
-    // TODO: create gift for each friend (delete giftidea and make new?)
 
     List<Gift> gifts = [];
     for (var friend in assignedFriends) {
