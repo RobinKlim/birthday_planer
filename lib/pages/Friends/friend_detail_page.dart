@@ -30,7 +30,7 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
         text: widget.friend.birthday!.toLocal().toIso8601String().split('T')[0],
       );
     } else {
-      _friendDateController = TextEditingController(text: "birthday not added yet");
+      _friendDateController = TextEditingController(text: "");
     }
     initAssignedGifts();
   }
@@ -139,9 +139,18 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate;
+    print("_friendDateController.text: ${_friendDateController.text}");
+
+    if (_friendDateController.text.isNotEmpty) {
+      initialDate = DateTime.parse(_friendDateController.text);
+    } else {
+      initialDate = DateTime(2000);
+    }
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime(2000),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
