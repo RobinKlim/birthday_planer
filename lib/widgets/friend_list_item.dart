@@ -5,23 +5,52 @@ import 'package:intl/intl.dart';
 import 'package:birthday_planer/services/friends.service.dart';
 import 'package:confetti/confetti.dart';
 
-class FriendListItem extends StatelessWidget {
+class FriendListItem extends StatefulWidget {
   final Friend friend;
 
   FriendListItem({required this.friend});
 
   @override
-  Widget build(BuildContext context) {
-    final friendsService = FriendsService();
-    final ConfettiController _confettiController = ConfettiController(
+  State<FriendListItem> createState() => _FriendListItemState();
+}
+
+class _FriendListItemState extends State<FriendListItem> {
+  late ConfettiController _confettiController;
+  final friendsService = FriendsService();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBirthday();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  void _checkBirthday() {
+    _confettiController = ConfettiController(
       duration: const Duration(seconds: 3),
     );
+    if (widget.friend.birthday != null) {
+      int daysUntilBirthday = friendsService.getDaysUntilBirthday(widget.friend.birthday!);
+      if (daysUntilBirthday == 0) {
+        _confettiController.play();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final friendsService = FriendsService();
 
     int? birthdayAge;
     int? daysUntilBirthday;
-    if (friend.birthday != null) {
-      daysUntilBirthday = friendsService.getDaysUntilBirthday(friend.birthday!);
-      birthdayAge = friendsService.getBirthdayAge(friend.birthday!);
+    if (widget.friend.birthday != null) {
+      daysUntilBirthday = friendsService.getDaysUntilBirthday(widget.friend.birthday!);
+      birthdayAge = friendsService.getBirthdayAge(widget.friend.birthday!);
     }
     String getOrdinalSuffix(int number) {
       if (number >= 11 && number <= 13) {
@@ -52,13 +81,14 @@ class FriendListItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: ListTile(
-            title: Text(friend.birthday != null ? '${friend.name} (${friendsService.getCurrentAge(friend.birthday!)})' : friend.name),
-            subtitle: friend.birthday != null ? Text(DateFormat.yMMMMd().format(friend.birthday!)) : Text('Birthday not added'),
+            title:
+                Text(widget.friend.birthday != null ? '${widget.friend.name} (${friendsService.getCurrentAge(widget.friend.birthday!)})' : widget.friend.name),
+            subtitle: widget.friend.birthday != null ? Text(DateFormat.yMMMMd().format(widget.friend.birthday!)) : Text('Birthday not added'),
             trailing: Icon(Icons.navigate_next),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FriendDetailPage(friend: friend)),
+                MaterialPageRoute(builder: (context) => FriendDetailPage(friend: widget.friend)),
               );
             },
           ),
@@ -68,8 +98,8 @@ class FriendListItem extends StatelessWidget {
             child: Center(
               child: ConfettiWidget(
                 confettiController: _confettiController,
-                blastDirectionality: BlastDirectionality.explosive, // Explode in all directions
-                shouldLoop: false, // Don't loop continuously
+                blastDirectionality: BlastDirectionality.explosive,
+                shouldLoop: false,
                 colors: const [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple],
               ),
             ),
@@ -84,7 +114,7 @@ class FriendListItem extends StatelessWidget {
                 color: daysUntilBirthday == 0 ? Colors.cyan : Colors.green,
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              child: friend.birthday != null
+              child: widget.friend.birthday != null
                   ? Text(
                       daysUntilBirthday == 0
                           ? '${birthdayAge!}${getOrdinalSuffix(birthdayAge)} birthday is today! 🎉'

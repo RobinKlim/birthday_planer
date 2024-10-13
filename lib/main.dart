@@ -1,5 +1,5 @@
+import 'package:birthday_planer/pages/start_page.dart';
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/navigation_widget.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const NavigationWidget(),
+      home: const StartPage(),
     );
   }
 }

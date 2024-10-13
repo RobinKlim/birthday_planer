@@ -15,8 +15,8 @@ class _FriendsListPageState extends State<FriendsListPage> {
   final friendsService = FriendsService();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     context.read<Database>().getAllFriends();
   }
 
@@ -89,16 +89,16 @@ class _FriendsListPageState extends State<FriendsListPage> {
                             final friend = friends[index];
                             final birthdayDays = friend.birthday != null ? friendsService.getDaysUntilBirthday(friend.birthday!) : null;
 
-                            if (friend.birthday == null && !isDividerAddedSecond) {
-                              isDividerAddedSecond = true;
+                            if (friend.birthday == null && !isDividerAddedFirst) {
+                              isDividerAddedFirst = true;
                               return buildDividerAndTile(
                                 'Birthday Not Added',
                                 friend,
                                 context,
                               );
                             } else if (friend.birthday != null && birthdayDays != null) {
-                              if (!isDividerAddedFirst && birthdayDays > 30) {
-                                isDividerAddedFirst = true;
+                              if (!isDividerAddedSecond && birthdayDays > 30) {
+                                isDividerAddedSecond = true;
                                 return buildDividerAndTile(
                                   'Birthday in more than 30 days',
                                   friend,

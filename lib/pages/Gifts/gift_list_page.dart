@@ -12,9 +12,9 @@ class GiftListPage extends StatefulWidget {
 
 class _GiftListPageState extends State<GiftListPage> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    context.watch<Database>().getAllGiftIdeas();
+  void initState() {
+    super.initState();
+    context.read<Database>().getAllGiftIdeas();
   }
 
   @override

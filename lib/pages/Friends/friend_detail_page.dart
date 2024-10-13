@@ -140,7 +140,6 @@ class _FriendDetailPageState extends State<FriendDetailPage> {
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime initialDate;
-    print("_friendDateController.text: ${_friendDateController.text}");
 
     if (_friendDateController.text.isNotEmpty) {
       initialDate = DateTime.parse(_friendDateController.text);

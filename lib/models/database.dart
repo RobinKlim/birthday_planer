@@ -75,6 +75,7 @@ class Database extends ChangeNotifier {
 
   // R E A D
   Future<void> getAllFriends() async {
+    print("get all friends");
     List<Friend> fetchedFriends = await isar.friends.where().findAll();
     currentFriends.clear();
     List<Friend> sortedFriends = sortFriendsByDaysUntilBirthday(fetchedFriends);

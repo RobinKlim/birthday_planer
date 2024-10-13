@@ -1,5 +1,4 @@
 import 'package:birthday_planer/models/gift.dart';
-import 'package:birthday_planer/pages/Gifts/gift_detail.page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:birthday_planer/models/database.dart';
