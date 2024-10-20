@@ -2,11 +2,15 @@ import 'package:birthday_planer/pages/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:birthday_planer/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = Database();
   await db.initialize();
+  NotificationService().initNotification();
+  tz.initializeTimeZones();
 
   runApp(MultiProvider(
     providers: [

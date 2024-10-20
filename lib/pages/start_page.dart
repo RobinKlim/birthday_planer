@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:birthday_planer/widgets/navigation_widget.dart';
+import 'package:birthday_planer/pages/home_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
 
   @override
-  _StartPageState createState() => _StartPageState();
+  StartPageState createState() => StartPageState();
 }
 
-class _StartPageState extends State<StartPage> {
+class StartPageState extends State<StartPage> {
   @override
   void initState() {
     super.initState();
     // Schedule the navigation to happen after 2 seconds
     Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavigationWidget()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     });
   }

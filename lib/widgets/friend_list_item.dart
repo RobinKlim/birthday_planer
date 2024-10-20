@@ -2,7 +2,7 @@ import 'package:birthday_planer/pages/Friends/friend_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:intl/intl.dart';
-import 'package:birthday_planer/services/friends.service.dart';
+import 'package:birthday_planer/services/friends_service.dart';
 import 'package:confetti/confetti.dart';
 
 class FriendListItem extends StatefulWidget {

@@ -1,7 +1,7 @@
 name: birthday_planer
 description: safe gifts for friends and get reminded about their birthdays.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' 
 
 version: 0.0.1+1
 
@@ -21,6 +21,8 @@ dependencies:
   isar_flutter_libs: ^3.1.0
   contacts_service: ^0.6.3
   permission_handler: ^11.3.1
+  flutter_local_notifications: ^17.2.3
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:

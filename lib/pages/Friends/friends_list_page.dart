@@ -4,7 +4,8 @@ import 'package:birthday_planer/widgets/friend_list_item.dart';
 import 'package:birthday_planer/models/friend.dart';
 import 'package:birthday_planer/models/database.dart';
 import 'package:provider/provider.dart';
-import 'package:birthday_planer/services/friends.service.dart';
+import 'package:birthday_planer/services/friends_service.dart';
+import 'package:birthday_planer/services/notification_service.dart';
 
 class FriendsListPage extends StatefulWidget {
   @override
@@ -58,6 +59,25 @@ class _FriendsListPageState extends State<FriendsListPage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              ElevatedButton(
+                onPressed: () {
+                  NotificationService().showNotification(title: "title", body: "era");
+                },
+                child: const Text('Show Notification'),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () {
+                  DateTime scheduledDate = DateTime.now().add(const Duration(seconds: 5));
+                  NotificationService().scheduleNotification(
+                    0,
+                    "Scheduled Notification",
+                    "This notification is scheduled to appear after 5 seconds",
+                    scheduledDate,
+                  );
+                },
+                child: const Text('Schedule Notification'),
+              ),
               Expanded(
                   child: friends.isEmpty
                       ? Center(
